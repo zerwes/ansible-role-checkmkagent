@@ -1,0 +1,12 @@
+---
+
+checkmk_baseurl: http://ftp.us.debian.org/debian/pool/main/c/check-mk
+checkmk_packages:
+  check-mk-agent:
+    version: 1.2.8p26-1
+    arch: amd64
+  check-mk-agent-logwatch:
+    version: 1.2.8p26-1
+    arch: all
+
+# vim: tabstop=2 expandtab shiftwidth=2 softtabstop=2 smartindent nu

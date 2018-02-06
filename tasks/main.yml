@@ -1,0 +1,23 @@
+---
+
+- name: install check_mk from repo
+  apt:
+    name: "{{ item.key }}"
+    state: latest
+  with_dict: "{{ checkmk_packages }}"
+  when: ansible_distribution == "Debian" and not ansible_distribution_release in ["jessie", 'stretch']
+
+
+- name: install check_mk from sid
+  apt:
+    deb: "{{ checkmk_baseurl }}/{{ item.key }}_{{ item.value.version }}_{{ item.value.arch }}.deb"
+  with_dict: "{{ checkmk_packages }}"
+  when: ansible_distribution == "Debian" and ansible_distribution_release in ["jessie", 'stretch']
+
+- name: install nagios-plugins
+  apt:
+    name: nagios-plugins
+    state: present
+
+
+# vim: tabstop=2 expandtab shiftwidth=2 softtabstop=2 smartindent nu
