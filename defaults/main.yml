@@ -9,4 +9,15 @@ checkmk_packages:
     version: 1.2.8p26-1
     arch: all
 
+# xinetd stuff
+checkmk_agent:
+  use_xinetd: True
+  port: 6556
+  # exec: /usr/bin/check_mk_caching_agent for fully redundant monitoring
+  exec: /usr/bin/check_mk_agent
+  only_from:
+    - 127.0.0.1
+  disable: "yes"
+
+
 # vim: tabstop=2 expandtab shiftwidth=2 softtabstop=2 smartindent nu
