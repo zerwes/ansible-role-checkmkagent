@@ -1,6 +1,8 @@
 ---
 
+# URL to get the packages from for jessie and stretch
 checkmk_baseurl: http://ftp.us.debian.org/debian/pool/main/c/check-mk
+
 checkmk_packages:
   check-mk-agent:
     version: 1.2.8p26-1
