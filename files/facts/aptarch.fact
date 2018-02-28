@@ -1,0 +1,2 @@
+#! /bin/bash
+echo "{\"dpkg_architecture\": \""$(dpkg-architecture  -l 2>/dev/null | sed '/DEB_BUILD_ARCH=/!d;s/.*=//g')"\"}"
