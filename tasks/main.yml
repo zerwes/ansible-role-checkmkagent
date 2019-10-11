@@ -22,20 +22,22 @@
     msg: "ansible_local.aptarch.dpkg_architecture: {{ ansible_local.aptarch.dpkg_architecture }}"
 - debug:
     var: ansible_lsb
+- debug:
+    msg: "ansible_distribution_release: {{ ansible_distribution_release }}"
 
 - name: install check_mk from repo
   apt:
     name: "{{ item.key }}"
     state: latest
   with_dict: "{{ checkmk_packages }}"
-  when: ansible_distribution == "Debian" and ansible_lsb.id == ansible_distribution and not ansible_distribution_release in ["jessie", 'stretch']
+  when: ansible_distribution in ['Debian', 'Raspbian'] and ansible_lsb.id == ansible_distribution and not ansible_distribution_release in ['jessie', 'stretch', 'buster',]
 
 
 - name: install check_mk from sid
   apt:
     deb: "{{ checkmk_baseurl }}/{{ item.key }}_{{ item.value.version }}_{{ item.value.arch|default(ansible_local.aptarch.dpkg_architecture) }}.deb"
   with_dict: "{{ checkmk_packages }}"
-  when: ansible_lsb.id == "Debian" and ansible_distribution_release in ["jessie", 'stretch']
+  when: ansible_lsb.id in ['Debian', 'Raspbian'] and ansible_distribution_release in ['jessie', 'stretch', 'buster',]
 
 - name: xinetd package
   apt:
