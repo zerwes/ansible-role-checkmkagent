@@ -1,27 +1,15 @@
 ---
 
-- name: custom facts directory
-  file:
-    path: /etc/ansible/facts.d
-    state: directory
-    mode: 0755
-    owner: root
-    group: root
-
-- name: custom facts
-  copy:
-    src: facts/
-    dest: /etc/ansible/facts.d/
-    mode: 0755
-
-- name: reload ansible_local facts
-  setup:
-    filter: ansible_local
+- name: Gather package facts
+  package_facts:
+    manager: apt
 
 - debug:
     msg: "ansible_local.aptarch.dpkg_architecture: {{ ansible_local.aptarch.dpkg_architecture }}"
 - debug:
     var: ansible_lsb
+#- debug:
+#    var: ansible_facts.packages
 - debug:
     msg: "ansible_distribution_release: {{ ansible_distribution_release }}"
 
@@ -30,14 +18,20 @@
     name: "{{ item.key }}"
     state: latest
   with_dict: "{{ checkmk_packages }}"
-  when: ansible_distribution in ['Debian', 'Raspbian'] and ansible_lsb.id == ansible_distribution and not ansible_distribution_release in ['jessie', 'stretch', 'buster',]
+  when:
+    - checkmk_packages_install
+    - item.key not in ansible_facts.packages
+    - ansible_distribution in ['Debian', 'Raspbian'] and ansible_lsb.id == ansible_distribution and not ansible_distribution_release in ['jessie', 'stretch', 'buster',]
 
 
 - name: install check_mk from sid
   apt:
     deb: "{{ checkmk_baseurl }}/{{ item.key }}_{{ item.value.version }}_{{ item.value.arch|default(ansible_local.aptarch.dpkg_architecture) }}.deb"
   with_dict: "{{ checkmk_packages }}"
-  when: ansible_lsb.id in ['Debian', 'Raspbian'] and ansible_distribution_release in ['jessie', 'stretch', 'buster',]
+  when:
+    - checkmk_packages_install
+    - item.key not in ansible_facts.packages
+    - ansible_lsb.id in ['Debian', 'Raspbian'] and ansible_distribution_release in ['jessie', 'stretch', 'buster',]
 
 - name: xinetd package
   apt:
@@ -60,6 +54,5 @@
   apt:
     name: nagios-plugins
     state: present
-
 
 # vim: tabstop=2 expandtab shiftwidth=2 softtabstop=2 smartindent nu

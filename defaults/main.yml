@@ -1,13 +1,19 @@
 ---
 
+# handle install of packages ?
+checkmk_packages_install: True
+
 # URL to get the packages from for jessie and stretch
 checkmk_baseurl: http://ftp.us.debian.org/debian/pool/main/c/check-mk
 
 checkmk_packages:
   check-mk-agent:
-    version: 1.2.8p26-1
+    version: 1.4.0p9-1
+  check-mk-common:
+    version: 1.4.0p9-1
+    arch: all
   check-mk-agent-logwatch:
-    version: 1.2.8p26-1
+    version: 1.4.0p9-1
     arch: all
 
 # xinetd stuff
@@ -19,6 +25,5 @@ checkmk_agent:
   only_from:
     - 127.0.0.1
   disable: "yes"
-
 
 # vim: tabstop=2 expandtab shiftwidth=2 softtabstop=2 smartindent nu
