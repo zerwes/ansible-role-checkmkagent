@@ -52,7 +52,7 @@
 
 - name: install nagios-plugins
   apt:
-    name: nagios-plugins
+    name: monitoring-plugins
     state: present
 
 # vim: tabstop=2 expandtab shiftwidth=2 softtabstop=2 smartindent nu
