@@ -1,21 +1,13 @@
 [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](http://www.gnu.org/licenses/gpl-3.0)
 
-ansible-role-checkmkagent
-=========================
+# ansible-role-checkmkagent
 
-install check-mk-agent on debian
+[ansible](https://www.ansible.com) role to install/configure [checkmk agent](https://checkmk.com/) on debian
 
-vars
-----
+## role variables
 
-	# xinetd stuff
-	checkmk_agent:
-	  use_xinetd: True
-	  port: 6556
-	  # exec: /usr/bin/check_mk_caching_agent for fully redundant monitoring
-	  exec: /usr/bin/check_mk_agent
-	  only_from:
-	    - 127.0.0.1
-	  disable: "yes"
+[defaults/main.yml](defaults/main.yml)
 
+## requirements
 
+a [checkmk server](https://checkmk.com/) reachable from the machine running ansible
