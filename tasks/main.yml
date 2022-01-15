@@ -1,58 +1,191 @@
 ---
 
-- name: Gather package facts
-  package_facts:
-    manager: apt
+- name: sync checkmk server version to agent playbook ...
+  uri:
+    url: "{{ checkmk_proto }}://{{ checkmk_hostname }}/{{ checkmk_path }}/"
+    return_content: yes
+  register: checkmkagents
 
 - debug:
-    msg: "ansible_local.aptarch.dpkg_architecture: {{ ansible_local.aptarch.dpkg_architecture }}"
-- debug:
-    var: ansible_lsb
-#- debug:
-#    var: ansible_facts.packages
-- debug:
-    msg: "ansible_distribution_release: {{ ansible_distribution_release }}"
+    var: checkmkagents
 
-- name: install check_mk from repo
+- fail:
+
+- name: register latest agent version
+  set_fact:
+    checkmk_agent_version: "{{ checkmk_version }}"
+  when: checkmk_agent_version is not defined
+
+- name: fetch {{ checkmk_agent_deb }}
+  delegate_to: localhost
+  get_url:
+    url: "{{ checkmk_proto }}://{{ checkmk_hostname }}/{{ checkmk_path }}/{{ checkmk_agent_deb }}"
+    dest: /var/tmp/{{ checkmk_agent_deb }}
+    force: no
+    mode: 0600
+
+- name: upload {{ checkmk_agent_deb }}
+  copy:
+    src: /var/tmp/{{ checkmk_agent_deb }}
+    dest: /var/tmp/{{ checkmk_agent_deb }}
+    force: no
+    mode: 0600
+
+- name: Install check_mk agent on Debian-based systems
   apt:
-    name: "{{ item.key }}"
-    state: latest
-  with_dict: "{{ checkmk_packages }}"
+    deb: /var/tmp/{{ checkmk_agent_deb }}
   when:
-    - checkmk_packages_install
-    - item.key not in ansible_facts.packages
-    - ansible_distribution in ['Debian', 'Raspbian'] and ansible_lsb.id == ansible_distribution and not ansible_distribution_release in ['jessie', 'stretch', 'buster',]
+    - ansible_distribution == "Debian" or ansible_distribution == "Ubuntu"
+    - not skip_checkmk_agent_deb|default(False)
 
-
-- name: install check_mk from sid
+- name: install required packages
   apt:
-    deb: "{{ checkmk_baseurl }}/{{ item.key }}_{{ item.value.version }}_{{ item.value.arch|default(ansible_local.aptarch.dpkg_architecture) }}.deb"
-  with_dict: "{{ checkmk_packages }}"
-  when:
-    - checkmk_packages_install
-    - item.key not in ansible_facts.packages
-    - ansible_lsb.id in ['Debian', 'Raspbian'] and ansible_distribution_release in ['jessie', 'stretch', 'buster',]
+    name: "{{ checkmkagent_required_packages }}"
+    update_cache: yes
+    cache_valid_time: 3600
 
-- name: xinetd package
+- name: purge check-mk-agent-logwatch
+  apt:
+    name: check-mk-agent-logwatch
+    state: absent
+
+- name: configure check_mk logwatch
+  template:
+    src: check_mk_logwatch.cfg.j2
+    dest: /etc/check_mk/logwatch.cfg
+    mode: 0644
+  tags:
+  - checkmk
+
+- name: stop check_mk.socket
+  systemd:
+    name: check_mk.socket
+    state: stopped
+    enabled: no
+    masked: yes
+    daemon_reload: yes
+  when: check_mk_agent_use_xinetd
+
+# required if we switch from systemd to xinetd
+- meta: flush_handlers
+
+- name: fail if both variants enabled
+  fail:
+    msg: "both variants set to {{ check_mk_agent_use_xinetd }}"
+  when: check_mk_agent_use_xinetd == check_mk_agent_use_systemd
+
+- name: install xinetd
   apt:
     name: xinetd
-    state: present
-  when: checkmk_agent.use_xinetd
+    update_cache: yes
+    cache_valid_time: 3600
+  tags:
+  - checkmk
+  when: check_mk_agent_use_xinetd
 
-- name: configure /etc/xinetd.d/check_mk
+- name: checkmk service file
   template:
+    src: check_mk.xinetd.j2
     dest: /etc/xinetd.d/check_mk
-    src: xinet.d-check_mk.j2
-    owner: 'root'
-    group: 'root'
-    mode: '0644'
-  notify: 
-    - restart xinetd
-  when: checkmk_agent.use_xinetd
+    mode: 0644
+  tags:
+  - checkmk
+  notify:
+  - xinetd
+  when: check_mk_agent_use_xinetd
 
-- name: install nagios-plugins
+- name: remove checkmk service file
+  file:
+    path: /etc/xinetd.d/check_mk
+    state: absent
+  tags:
+  - checkmk
+  notify:
+  - xinetd
+  when: check_mk_agent_use_systemd
+
+# required if we change from xinetd to systemd
+- meta: flush_handlers
+
+- name: purge xinetd
   apt:
-    name: monitoring-plugins
-    state: present
+    name: xinetd
+    state: absent
+    purge: yes
+  tags:
+  - checkmk
+  when:
+    - check_mk_agent_use_systemd
+    - purge_xinetd|default(False)
 
-# vim: tabstop=2 expandtab shiftwidth=2 softtabstop=2 smartindent nu
+- name: start check_mk.socket
+  systemd:
+    name: check_mk.socket
+    state: started
+    enabled: yes
+    masked: no
+    daemon_reload: yes
+  when: check_mk_agent_use_systemd
+
+- name: Copy check plugins from main check_mk site
+  delegate_to: localhost
+  get_url:
+    url: "{{ checkmk_proto }}://{{ checkmk_hostname }}/{{ checkmk_path }}/plugins/{{ item }}"
+    dest: "/var/tmp/{{ item }}"
+    force: no
+    mode: 0600
+  with_items:
+    - "{{ check_mk_plugins }}"
+    - "{{ check_mk_logwatch_plugin }}"
+
+- name: "Upload {{ check_mk_logwatch_plugin }} plugin"
+  copy:
+    src: "/var/tmp/{{ item }}"
+    dest: "/usr/lib/check_mk_agent/plugins/{{ item }}"
+    owner: root
+    group: root
+    mode: 0755
+  with_items: "{{ check_mk_logwatch_plugin }}"
+  when: check_mk_logwatch
+
+- name: "{{ check_mk_logwatch_plugin }} requires python2"
+  apt:
+    name: python2
+  when: check_mk_logwatch
+
+- name: Configure logwatch plugin
+  template:
+    src: check_mk_logwatch.cfg.j2
+    dest: /etc/check_mk/logwatch.cfg
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Upload check plugins
+  copy:
+    src: "/var/tmp/{{ item }}"
+    dest: "/usr/lib/check_mk_agent/plugins/{{ item }}"
+    owner: root
+    group: root
+    mode: 0755
+  with_items: "{{ check_mk_plugins }}"
+
+- name: Copy local check_mk cfg files
+  copy:
+    src: "{{ item }}"
+    dest: "/etc/check_mk/{{ item | basename }}"
+    owner: root
+    group: root
+    mode: 0400
+  with_items: "{{ check_mk_local_cfg }}"
+
+- name: Copy local check_mk checks
+  copy:
+    src: "{{ item }}"
+    dest: "/usr/lib/check_mk_agent/local/{{ item | basename }}"
+    owner: root
+    group: root
+    mode: 0755
+  with_items: "{{ check_mk_local_plugins }}"
+
+# vim: tabstop=2 expandtab shiftwidth=2 softtabstop=2 smartindent nu ft=yaml

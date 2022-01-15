@@ -1,0 +1,33 @@
+#!/bin/bash
+
+STATUS="UNDEF"
+declare -i RET=0
+declare -i LASTUPDATEMIN=-1
+
+# threshold in minutes
+declare -ri LASTUPDATEMIN_WARN=2520
+declare -ri LASTUPDATEMIN_CRIT=2940
+
+if [ -f /var/lib/apt/periodic/update-success-stamp ]; then
+	LASTUPDATEMIN=$((($(/bin/date +%s)-$(/usr/bin/stat --format=%Y /var/lib/apt/periodic/update-success-stamp))/60))
+	LASTUPDATEH=""
+	if [ $LASTUPDATEMIN -ge 60 ]; then
+		LASTUPDATEH=" ($((LASTUPDATEMIN/60)) h)"
+	fi
+	LASTUPDATEMINTXT="${LASTUPDATEMIN} min${LASTUPDATEH}"
+	STATUS="OK: last successfull apt update was $LASTUPDATEMINTXT ago"
+	if [ $LASTUPDATEMIN -ge $LASTUPDATEMIN_CRIT ]; then
+		RET=2
+		STATUS="CRITICAL: last successfull apt update was $LASTUPDATEMINTXT ago"
+	elif [ $LASTUPDATEMIN -ge $LASTUPDATEMIN_WARN ]; then
+		RET=1
+		STATUS="WARNING: last successfull apt update was $LASTUPDATEMINTXT ago"
+	fi
+else
+	RET=3
+	STATUS="UNKNOWN: missing /var/lib/apt/periodic/update-success-stamp"
+fi
+
+echo "$RET aptlastupdate e=$RET;;;0|lastrun=$LASTUPDATEMIN;; " $STATUS
+exit $RET
+

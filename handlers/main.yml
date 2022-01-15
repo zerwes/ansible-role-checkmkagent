@@ -1,8 +1,10 @@
 ---
 
-- name: restart xinetd
+- name: xinetd
   service:
-    name: 'xinetd'
-    state: 'restarted'
+    name: xinetd
+    state: restarted
+  ignore_errors: yes
+  when: not purge_xinetd|default(False)
 
-# vim: tabstop=2 expandtab shiftwidth=2 softtabstop=2 smartindent nu
+# vim: tabstop=2 expandtab shiftwidth=2 softtabstop=2 smartindent nu ft=yaml

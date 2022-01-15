@@ -1,0 +1,13 @@
+#!/bin/bash
+
+STATUS="OK"
+declare -i RET=0
+
+if [ -f /var/run/reboot-required ]; then
+        STATUS="WARNING: $(cat /var/run/reboot-required.pkgs)"
+        RET=1
+fi
+
+echo "$RET REBOOTREQUIRED e=$RET;;;0 " $STATUS
+exit $RET
+

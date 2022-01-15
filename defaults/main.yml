@@ -1,29 +1,34 @@
 ---
 
-# handle install of packages ?
-checkmk_packages_install: True
+checkmk_hostname: 192.168.100.25
+checkmk_ip: 192.168.100.25
+checkmk_path: "zero/check_mk/agents"
+#checkmk_agent_version: "2.0.0p4" # if this is not set we will keep it in sync with the server version ...
+checkmk_agent_deb: "check-mk-agent_{{ checkmk_agent_version }}-1_all.deb"
+checkmk_proto: http
 
-# URL to get the packages from for jessie and stretch
-checkmk_baseurl: http://ftp.us.debian.org/debian/pool/main/c/check-mk
+# use logwatch
+check_mk_logwatch: True
+check_mk_logwatch_plugin: mk_logwatch_2.py
 
-checkmk_packages:
-  check-mk-agent:
-    version: 1.4.0p9-1
-  check-mk-common:
-    version: 1.4.0p9-1
-    arch: all
-  check-mk-agent-logwatch:
-    version: 1.4.0p9-1
-    arch: all
+check_mk_logwatch_syslog_patterns:
+  - I softdog
+  - I hispanic
 
-# xinetd stuff
-checkmk_agent:
-  use_xinetd: True
-  port: 6556
-  # exec: /usr/bin/check_mk_caching_agent for fully redundant monitoring
-  exec: /usr/bin/check_mk_agent
-  only_from:
-    - 127.0.0.1
-  disable: "yes"
+# list of additional packages to install
+checkmkagent_required_packages: []
 
-# vim: tabstop=2 expandtab shiftwidth=2 softtabstop=2 smartindent nu
+# list of all plugins to be downloaded and installed from main check_mk site
+check_mk_plugins: []
+
+# list of all local plugins to be installed
+check_mk_local_plugins:
+  - check_apt-update-success
+  - check_reboot
+
+# list of local cfg files
+check_mk_local_cfg: []
+
+check_mk_agent_use_xinetd: True
+check_mk_agent_use_systemd: False
+
