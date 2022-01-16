@@ -4,7 +4,7 @@
   delegate_to: localhost
   uri:
     url: "{{ checkmk_proto }}://{{ checkmk_hostname }}/{{ checkmk_path }}/"
-    return_content: yes
+    return_content: true
   register: checkmkagents
   when:
     - checkmk_agent_version is not defined
@@ -22,7 +22,7 @@
     checkmk_agent_version: '{{ _checkmk_agent_deb | regex_search("[0-9]\.[0-9]\.[0-9]p[0-9]+") }}'
 
 - assert:
-    quiet: yes
+    quiet: true
     msg: "checkmk_agent_version can not be determined from server"
     that:
       - checkmk_agent_version is defined
@@ -33,14 +33,14 @@
   get_url:
     url: "{{ checkmk_proto }}://{{ checkmk_hostname }}/{{ checkmk_path }}/{{ checkmk_agent_deb }}"
     dest: /var/tmp/{{ checkmk_agent_deb }}
-    force: no
+    force: false
     mode: 0600
 
 - name: upload {{ checkmk_agent_deb }}
   copy:
     src: /var/tmp/{{ checkmk_agent_deb }}
     dest: /var/tmp/{{ checkmk_agent_deb }}
-    force: no
+    force: false
     mode: 0600
 
 - name: Install check_mk agent on Debian-based systems
@@ -48,12 +48,12 @@
     deb: /var/tmp/{{ checkmk_agent_deb }}
   when:
     - ansible_distribution == "Debian" or ansible_distribution == "Ubuntu"
-    - not skip_checkmk_agent_deb|default(False)
+    - not skip_checkmk_agent_deb|default(false)
 
 - name: install required packages
   apt:
     name: "{{ checkmkagent_required_packages }}"
-    update_cache: yes
+    update_cache: true
     cache_valid_time: 3600
 
 - name: purge check-mk-agent-logwatch
@@ -67,15 +67,15 @@
     dest: /etc/check_mk/logwatch.cfg
     mode: 0644
   tags:
-  - checkmk
+    - checkmk
 
 - name: stop check_mk.socket
   systemd:
     name: check_mk.socket
     state: stopped
-    enabled: no
-    masked: yes
-    daemon_reload: yes
+    enabled: false
+    masked: true
+    daemon_reload: true
   when: check_mk_agent_use_xinetd
 
 # required if we switch from systemd to xinetd
@@ -89,10 +89,10 @@
 - name: install xinetd
   apt:
     name: xinetd
-    update_cache: yes
+    update_cache: true
     cache_valid_time: 3600
   tags:
-  - checkmk
+    - checkmk
   when: check_mk_agent_use_xinetd
 
 - name: checkmk service file
@@ -101,9 +101,9 @@
     dest: /etc/xinetd.d/check_mk
     mode: 0644
   tags:
-  - checkmk
+    - checkmk
   notify:
-  - xinetd
+    - xinetd
   when: check_mk_agent_use_xinetd
 
 - name: remove checkmk service file
@@ -111,9 +111,9 @@
     path: /etc/xinetd.d/check_mk
     state: absent
   tags:
-  - checkmk
+    - checkmk
   notify:
-  - xinetd
+    - xinetd
   when: check_mk_agent_use_systemd
 
 # required if we change from xinetd to systemd
@@ -123,9 +123,9 @@
   apt:
     name: xinetd
     state: absent
-    purge: yes
+    purge: true
   tags:
-  - checkmk
+    - checkmk
   when:
     - check_mk_agent_use_systemd
     - purge_xinetd|default(False)
@@ -134,9 +134,9 @@
   systemd:
     name: check_mk.socket
     state: started
-    enabled: yes
-    masked: no
-    daemon_reload: yes
+    enabled: true
+    masked: false
+    daemon_reload: true
   when: check_mk_agent_use_systemd
 
 - name: Copy check plugins from main check_mk site
@@ -144,7 +144,7 @@
   get_url:
     url: "{{ checkmk_proto }}://{{ checkmk_hostname }}/{{ checkmk_path }}/plugins/{{ item }}"
     dest: "/var/tmp/{{ item }}"
-    force: no
+    force: false
     mode: 0600
   with_items:
     - "{{ check_mk_plugins }}"
