@@ -21,7 +21,8 @@
   set_fact:
     checkmk_agent_version: '{{ _checkmk_agent_deb | regex_search("[0-9]\.[0-9]\.[0-9]p[0-9]+") }}'
 
-- assert:
+- name: ensure we could determine the checkmk_agent_version
+  assert:
     quiet: true
     msg: "checkmk_agent_version can not be determined from server"
     that:
