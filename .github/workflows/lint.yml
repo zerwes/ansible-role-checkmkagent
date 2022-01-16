@@ -1,0 +1,15 @@
+# vim: tabstop=2 expandtab shiftwidth=2 softtabstop=2 smartindent nu
+---
+name: ansible-lint
+on:
+  pull_request:
+  push:
+jobs:
+  build:
+    runs-on: debian-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: run ansible-lint
+        uses: ansible/ansible-lint-action@master
+        targets: "./"
+        args: "-q"
