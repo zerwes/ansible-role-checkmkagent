@@ -56,4 +56,8 @@ check_mk_local_cfg: []
 check_mk_agent_use_xinetd: true
 check_mk_agent_use_systemd: false
 
+# purge xinetd package (in case check_mk_agent_use_systemd == true)
+# default:
+# purge_xinetd: false
+
 ...
