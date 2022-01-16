@@ -24,6 +24,10 @@ checkmk_path: "SITENAME/check_mk/agents"
 # agent name template
 checkmk_agent_deb: "check-mk-agent_{{ checkmk_agent_version }}-1_all.deb"
 
+# skip installation of checkmk_agent package, just perform the config steps
+# default:
+# skip_checkmk_agent_deb: false
+
 # use logwatch
 check_mk_logwatch: true
 check_mk_logwatch_plugin: mk_logwatch_2.py
