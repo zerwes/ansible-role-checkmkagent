@@ -11,5 +11,6 @@ jobs:
       - uses: actions/checkout@v2
       - name: run ansible-lint
         uses: ansible/ansible-lint-action@master
-        targets: "./"
-        args: "-q"
+        with:
+          targets: "./"
+          args: "-q"
