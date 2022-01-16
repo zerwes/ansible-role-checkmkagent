@@ -4,7 +4,7 @@
 # define the hostname of the checkmk server
 # required for fetching the deb package fron the server
 # the server must be reacheble from the control machine, not from the target host
-#checkmk_hostname:
+# checkmk_hostname:
 
 # protocoll used by the server (http|https)
 checkmk_proto: http
@@ -19,20 +19,20 @@ checkmk_path: "SITENAME/check_mk/agents"
 
 # optionaly define a hardcoded version of the agent in order to prevent upgrades
 # if this is not set, we will detect the lates version from the server
-#checkmk_agent_version: "2.0.0p4"
+# checkmk_agent_version: "2.0.0p4"
 
 # agent name template
 checkmk_agent_deb: "check-mk-agent_{{ checkmk_agent_version }}-1_all.deb"
 
 # use logwatch
-check_mk_logwatch: True
+check_mk_logwatch: true
 check_mk_logwatch_plugin: mk_logwatch_2.py
 
 # patterns for logwatch
 # example:
-#check_mk_logwatch_syslog_patterns:
-#  - I softdog
-#  - I hispanic
+# check_mk_logwatch_syslog_patterns:
+#   - I softdog
+#   - I hispanic
 check_mk_logwatch_syslog_patterns: []
 
 # list of additional packages to install
@@ -43,9 +43,9 @@ check_mk_plugins: []
 
 # list of all local plugins to be installed
 # in the role we have included 2 plugins
-#check_mk_local_plugins:
-#  - check_apt-update-success
-#  - check_reboot
+# check_mk_local_plugins:
+#   - check_apt-update-success
+#   - check_reboot
 check_mk_local_plugins: []
 
 # list of local cfg files
@@ -53,7 +53,7 @@ check_mk_local_cfg: []
 
 # method how the agent should be started
 # check_mk_agent_use_xinetd and check_mk_agent_use_systemd are mutualy exclusive
-check_mk_agent_use_xinetd: True
-check_mk_agent_use_systemd: False
+check_mk_agent_use_xinetd: true
+check_mk_agent_use_systemd: false
 
 ...
