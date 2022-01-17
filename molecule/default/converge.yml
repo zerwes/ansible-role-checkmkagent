@@ -36,4 +36,3 @@
     - assert:
         that:
           - nc.stdout_lines[0] == '<<<check_mk>>>'
-
