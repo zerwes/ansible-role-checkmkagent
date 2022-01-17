@@ -25,3 +25,15 @@
     - name: "Include ansible-role-checkmkagent"
       include_role:
         name: "ansible-role-checkmkagent"
+  post_tasks:
+    - name: "Install netcat-openbsd"
+      apt:
+        name: netcat-openbsd
+    - name: "Test checkmk agent"
+      command: /bin/nc.openbsd -N -w 5 127.0.0.1 6556
+      register: nc
+      changed_when: false
+    - assert:
+        that:
+          - nc.stdout_lines[0] == '<<<check_mk>>>'
+
