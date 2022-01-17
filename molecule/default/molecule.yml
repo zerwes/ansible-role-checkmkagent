@@ -1,0 +1,32 @@
+---
+driver:
+  name: docker
+platforms:
+  - name: instance
+    #image: geerlingguy/docker-debian11-ansible:latest
+    image: geerlingguy/docker-debian10-ansible:latest
+    pre_build_image: true
+    privileged: true
+    capabilities:
+      - SYS_ADMIN
+    command: /sbin/init
+    security_opts:
+      - seccomp=path/to/seccomp.json
+    tmpfs:
+      - /run
+      - /run/lock
+      - /tmp
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+      - /var/run/docker.sock:/var/run/docker.sock:rw
+    environment: { container: docker }
+provisioner:
+  name: ansible
+  inventory:
+    host_vars:
+      instance:
+        checkmk_agent_version: 2.0.0p18
+        checkmk_hostname: 127.0.0.1
+        download_checkmk_agent_deb: false
+verifier:
+  name: ansible

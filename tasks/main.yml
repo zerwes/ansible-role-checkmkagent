@@ -36,9 +36,10 @@
   delegate_to: localhost
   get_url:
     url: "{{ checkmk_proto }}://{{ checkmk_hostname }}/{{ checkmk_path }}/{{ checkmk_agent_deb }}"
-    dest: /var/tmp/{{ checkmk_agent_deb }}
+    dest: "/var/tmp/{{ checkmk_agent_deb }}"
     force: false
     mode: 0600
+  when: download_checkmk_agent_deb | default(true)
 
 - name: upload {{ checkmk_agent_deb }}
   copy:
@@ -46,6 +47,7 @@
     dest: /var/tmp/{{ checkmk_agent_deb }}
     force: false
     mode: 0600
+  when: download_checkmk_agent_deb | default(true)
 
 - name: Install check_mk agent on Debian-based systems
   apt:
