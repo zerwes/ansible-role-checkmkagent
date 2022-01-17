@@ -1,0 +1,22 @@
+# vim: tabstop=2 expandtab shiftwidth=2 softtabstop=2 smartindent nu
+---
+name: molecule test
+on:
+  pull_request:
+  push:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+
+      - name: Install test dependencies.
+        run: python3 -m pip install "molecule[docker,lint]" yamllint ansible-lint
+
+      - name: run molecule tests
+        run: molecule test
