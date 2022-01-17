@@ -40,6 +40,8 @@
     force: false
     mode: 0600
   when: download_checkmk_agent_deb | default(true)
+  tags:
+    - molecule-notest
 
 - name: upload {{ checkmk_agent_deb }}
   copy:
@@ -48,6 +50,8 @@
     force: false
     mode: 0600
   when: download_checkmk_agent_deb | default(true)
+  tags:
+    - molecule-notest
 
 - name: Install check_mk agent on Debian-based systems
   apt:
@@ -66,14 +70,6 @@
   apt:
     name: check-mk-agent-logwatch
     state: absent
-
-- name: configure check_mk logwatch
-  template:
-    src: check_mk_logwatch.cfg.j2
-    dest: /etc/check_mk/logwatch.cfg
-    mode: 0644
-  tags:
-    - checkmk
 
 - name: stop check_mk.socket
   systemd:
@@ -97,8 +93,6 @@
     name: xinetd
     update_cache: true
     cache_valid_time: 3600
-  tags:
-    - checkmk
   when: check_mk_agent_use_xinetd
 
 - name: checkmk service file
@@ -106,8 +100,6 @@
     src: check_mk.xinetd.j2
     dest: /etc/xinetd.d/check_mk
     mode: 0644
-  tags:
-    - checkmk
   notify:
     - xinetd
   when: check_mk_agent_use_xinetd
@@ -116,8 +108,6 @@
   file:
     path: /etc/xinetd.d/check_mk
     state: absent
-  tags:
-    - checkmk
   notify:
     - xinetd
   when: check_mk_agent_use_systemd
@@ -130,8 +120,6 @@
     name: xinetd
     state: absent
     purge: true
-  tags:
-    - checkmk
   when:
     - check_mk_agent_use_systemd
     - purge_xinetd|default(False)
@@ -155,6 +143,8 @@
   with_items:
     - "{{ check_mk_plugins }}"
     - "{{ check_mk_logwatch_plugin }}"
+  tags:
+    - molecule-notest
 
 - name: "Upload {{ check_mk_logwatch_plugin }} plugin"
   copy:
@@ -165,6 +155,8 @@
     mode: 0755
   with_items: "{{ check_mk_logwatch_plugin }}"
   when: check_mk_logwatch
+  tags:
+    - molecule-notest
 
 - name: "{{ check_mk_logwatch_plugin }} requires python2"
   apt:
@@ -178,6 +170,7 @@
     owner: root
     group: root
     mode: 0644
+  when: check_mk_logwatch
 
 - name: Upload check plugins
   copy:
