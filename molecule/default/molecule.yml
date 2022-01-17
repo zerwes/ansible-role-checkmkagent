@@ -29,5 +29,7 @@ provisioner:
         checkmk_agent_version: 2.0.0p18
         checkmk_hostname: 127.0.0.1
         download_checkmk_agent_deb: false
+        check_mk_logwatch_plugin:
+        check_mk_logwatch: false
 verifier:
   name: ansible
