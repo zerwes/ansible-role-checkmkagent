@@ -79,6 +79,8 @@
     masked: true
     daemon_reload: true
   when: check_mk_agent_use_xinetd
+  tags:
+    - molecule-idempotence-notest
 
 # required if we switch from systemd to xinetd
 - meta: flush_handlers
@@ -132,6 +134,8 @@
     masked: false
     daemon_reload: true
   when: check_mk_agent_use_systemd
+  tags:
+    - molecule-idempotence-notest
 
 - name: Copy check plugins from main check_mk site
   delegate_to: localhost
