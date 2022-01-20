@@ -158,6 +158,7 @@
     group: root
     mode: 0755
   with_items: "{{ check_mk_logwatch_plugin }}"
+  diff: no
   when: check_mk_logwatch
   tags:
     - molecule-notest
