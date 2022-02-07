@@ -1,8 +1,2 @@
 *.retry
 *.swp
-FSEHL.pdf
-roles/repo.zero-sys.net/files/hiyapyco/*
-roles/repo.jwhoisserver.net/files/deb/*
-roles/repo.jwhoisserver.net/files/opensuse/*
-roles/repo.jwhoisserver.net/files/m2/*
-roles/repo.jwhoisserver.net/files/fedora/*
