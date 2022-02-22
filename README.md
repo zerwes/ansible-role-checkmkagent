@@ -13,3 +13,22 @@
 ## requirements
 
 a [checkmk server](https://checkmk.com/) reachable from the machine running ansible
+
+## example configuration
+
+```
+# hostname of the checkmk server
+checkmk_hostname: "cmk.example.domain"
+checkmk_proto: https
+checkmk_path: "SITE/check_mk/agents"
+# IP of the checkmk server
+checkmk_ip: "192.168.0.10"
+# we prefere good old xinetd
+check_mk_agent_use_systemd: false
+check_mk_agent_use_xinetd: true
+# install and configure logwatch
+check_mk_logwatch: true
+check_mk_logwatch_syslog_patterns:
+  - I softdog
+  - I hispanic
+```
