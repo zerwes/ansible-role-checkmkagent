@@ -17,7 +17,7 @@ a [checkmk server](https://checkmk.com/) reachable from the machine running ansi
 
 ## example configuration
 
-```
+```yml
 # hostname of the checkmk server
 checkmk_hostname: "cmk.example.domain"
 checkmk_proto: https
