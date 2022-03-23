@@ -71,6 +71,11 @@
     name: check-mk-agent-logwatch
     state: absent
 
+- name: register check_mk.socket state
+  systemd:
+    name: check_mk.socket
+  register: check_mk_socket
+
 - name: stop check_mk.socket
   systemd:
     name: check_mk.socket
@@ -78,9 +83,9 @@
     enabled: false
     masked: true
     daemon_reload: true
-  when: check_mk_agent_use_xinetd
-  tags:
-    - molecule-idempotence-notest
+  when:
+    - check_mk_agent_use_xinetd
+    - check_mk_socket.status.ActiveState == 'active'
 
 # required if we switch from systemd to xinetd
 - meta: flush_handlers
@@ -133,9 +138,9 @@
     enabled: true
     masked: false
     daemon_reload: true
-  when: check_mk_agent_use_systemd
-  tags:
-    - molecule-idempotence-notest
+  when:
+    - check_mk_agent_use_systemd
+    - check_mk_socket.status.ActiveState == 'inactive'
 
 - name: Copy check plugins from main check_mk site
   delegate_to: localhost
