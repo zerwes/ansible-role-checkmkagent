@@ -5,6 +5,7 @@
   uri:
     url: "{{ checkmk_proto }}://{{ checkmk_hostname }}/{{ checkmk_path }}/"
     return_content: true
+  check_mode: false
   register: checkmkagents
   when:
     - checkmk_agent_version is not defined
@@ -59,6 +60,7 @@
   when:
     - ansible_distribution == "Debian" or ansible_distribution == "Ubuntu"
     - not skip_checkmk_agent_deb|default(false)
+    - not ansible_check_mode
 
 - name: install required packages
   apt:
