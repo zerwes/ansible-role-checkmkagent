@@ -7,7 +7,7 @@
         file: ../../defaults/main.yml
     - name: "fetch server deb ..."
       get_url:
-        url: "https://download.checkmk.com/checkmk/2.0.0p18/check-mk-raw-{{ checkmk_agent_version }}_0.bullseye_amd64.deb"
+        url: "https://download.checkmk.com/checkmk/{{ checkmk_agent_version }}/check-mk-raw-{{ checkmk_agent_version }}_0.bullseye_amd64.deb"
         dest: "/var/tmp//check-mk-raw-{{ checkmk_agent_version }}_0.bullseye_amd64.deb"
         force: false
         mode: 0600
