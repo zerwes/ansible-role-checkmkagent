@@ -1,10 +1,21 @@
 ---
-# This is an example playbook to execute Ansible tests.
-
-- name: Verify
+- name: switch back from systemd to xinetd
   hosts: all
-  gather_facts: false
+  vars:
+    check_mk_agent_use_xinetd: true
+    check_mk_agent_use_systemd: false
   tasks:
-  - name: Example assertion
-    assert:
-      that: true
+    - name: "Include ansible-role-checkmkagent"
+      include_role:
+        name: "ansible-role-checkmkagent"
+  post_tasks:
+    - name: "Install netcat-openbsd"
+      apt:
+        name: netcat-openbsd
+    - name: "Test checkmk agent"
+      command: /bin/nc.openbsd -N -w 5 127.0.0.1 6556
+      register: nc
+      changed_when: false
+    - assert:
+        that:
+          - nc.stdout_lines[0] == '<<<check_mk>>>'
