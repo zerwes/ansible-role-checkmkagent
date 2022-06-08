@@ -37,7 +37,7 @@
   delegate_to: localhost
   get_url:
     url: "{{ checkmk_proto }}://{{ checkmk_hostname }}/{{ checkmk_path }}/{{ checkmk_agent_deb }}"
-    dest: "/var/tmp/{{ checkmk_agent_deb }}"
+    dest: "{{ _local_tmp }}/{{ checkmk_agent_deb }}"
     force: false
     mode: 0600
   when: download_checkmk_agent_deb | default(true)
@@ -46,7 +46,7 @@
 
 - name: upload {{ checkmk_agent_deb }}
   copy:
-    src: /var/tmp/{{ checkmk_agent_deb }}
+    src: "{{ _local_tmp }}/{{ checkmk_agent_deb }}"
     dest: /var/tmp/{{ checkmk_agent_deb }}
     force: false
     mode: 0600
@@ -148,7 +148,7 @@
   delegate_to: localhost
   get_url:
     url: "{{ checkmk_proto }}://{{ checkmk_hostname }}/{{ checkmk_path }}/plugins/{{ item }}"
-    dest: "/var/tmp/{{ item }}"
+    dest: "{{ _local_tmp }}/{{ item }}"
     force: false
     mode: 0600
   with_items:
@@ -159,7 +159,7 @@
 
 - name: "Upload {{ check_mk_logwatch_plugin }} plugin"
   copy:
-    src: "/var/tmp/{{ item }}"
+    src: "{{ _local_tmp }}/{{ item }}"
     dest: "/usr/lib/check_mk_agent/plugins/{{ item }}"
     owner: root
     group: root
@@ -186,7 +186,7 @@
 
 - name: Upload check plugins
   copy:
-    src: "/var/tmp/{{ item }}"
+    src: "{{ _local_tmp }}/{{ item }}"
     dest: "/usr/lib/check_mk_agent/plugins/{{ item }}"
     owner: root
     group: root

@@ -66,4 +66,7 @@ check_mk_agent_use_systemd: false
 # default:
 # purge_xinetd: false
 
+# set this to "{{ lookup('config', 'DEFAULT_LOCAL_TMP') | dirname }}" to make the playbook multi user aware
+_local_tmp: /var/tmp
+
 ...
