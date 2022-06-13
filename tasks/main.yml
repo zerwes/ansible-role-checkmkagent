@@ -73,6 +73,11 @@
     name: check-mk-agent-logwatch
     state: absent
 
+- name: fail if both variants enabled
+  fail:
+    msg: "both variants set to {{ check_mk_agent_use_xinetd }}"
+  when: check_mk_agent_use_xinetd == check_mk_agent_use_systemd
+
 - name: register check_mk.socket state
   systemd:
     name: check_mk.socket
@@ -89,14 +94,6 @@
     - check_mk_agent_use_xinetd
     - check_mk_socket.status.ActiveState == 'active'
 
-# required if we switch from systemd to xinetd
-- meta: flush_handlers
-
-- name: fail if both variants enabled
-  fail:
-    msg: "both variants set to {{ check_mk_agent_use_xinetd }}"
-  when: check_mk_agent_use_xinetd == check_mk_agent_use_systemd
-
 - name: install xinetd
   apt:
     name: xinetd
@@ -109,20 +106,28 @@
     src: check_mk.xinetd.j2
     dest: /etc/xinetd.d/check_mk
     mode: 0644
-  notify:
-    - xinetd
   when: check_mk_agent_use_xinetd
+  register: xinetdcfgchanged
 
 - name: remove checkmk service file
   file:
     path: /etc/xinetd.d/check_mk
     state: absent
-  notify:
-    - xinetd
   when: check_mk_agent_use_systemd
 
-# required if we change from xinetd to systemd
-- meta: flush_handlers
+- name: register xinetd desired service state
+  set_fact:
+    _xinetd_service_state: restarted
+  when:
+    - check_mk_agent_use_systemd or (check_mk_agent_use_xinetd and xinetdcfgchanged.changed | default(false))
+
+- name: ensure xinetd service state is {{ _xinetd_service_state | default('started') }}
+  service:
+    name: xinetd
+    state: "{{ _xinetd_service_state | default('started') }}"
+  ignore_errors: "{{ check_mk_agent_use_systemd }}"
+  when:
+    - not purge_xinetd | default(False)
 
 - name: purge xinetd
   apt:
@@ -131,7 +136,7 @@
     purge: true
   when:
     - check_mk_agent_use_systemd
-    - purge_xinetd|default(False)
+    - purge_xinetd | default(False)
 
 - name: start check_mk.socket
   systemd:
