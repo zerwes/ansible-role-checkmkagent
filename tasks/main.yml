@@ -159,6 +159,7 @@
   with_items:
     - "{{ check_mk_plugins }}"
     - "{{ check_mk_logwatch_plugin }}"
+  check_mode: false
   tags:
     - molecule-notest
 
