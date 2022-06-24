@@ -1,5 +1,15 @@
 ---
 
+- name: convert deprecated format from list to dict for checkmkagent_required_packages
+  set_fact:
+    checkmkagent_required_packages: "{ 'deprecated' : {{ checkmkagent_required_packages }} }"
+  when: checkmkagent_required_packages | type_debug == "list"
+
+- name: convert deprecated format from list to dict for check_mk_logwatch_syslog_patterns
+  set_fact:
+    check_mk_logwatch_syslog_patterns: "{ 'deprecated' : {{ check_mk_logwatch_syslog_patterns }} }"
+  when: check_mk_logwatch_syslog_patterns | type_debug == "list"
+
 - name: fetch agent page from checkmk server
   delegate_to: localhost
   uri:
@@ -64,7 +74,7 @@
 
 - name: install required packages
   apt:
-    name: "{{ checkmkagent_required_packages }}"
+    name: "{{ checkmkagent_required_packages.values() | list | flatten }}"
     update_cache: true
     cache_valid_time: 3600
 
