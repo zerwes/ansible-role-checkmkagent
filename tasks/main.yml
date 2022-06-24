@@ -10,6 +10,11 @@
     check_mk_logwatch_syslog_patterns: "{ 'deprecated' : {{ check_mk_logwatch_syslog_patterns }} }"
   when: check_mk_logwatch_syslog_patterns | type_debug == "list"
 
+- name: convert deprecated format from list to dict for check_mk_plugins
+  set_fact:
+    check_mk_plugins: "{ 'deprecated' : {{ check_mk_plugins }} }"
+  when: check_mk_plugins | type_debug == "list"
+
 - name: fetch agent page from checkmk server
   delegate_to: localhost
   uri:
@@ -167,7 +172,7 @@
     force: false
     mode: 0600
   with_items:
-    - "{{ check_mk_plugins }}"
+    - "{{ check_mk_plugins.values() | list | flatten }}"
     - "{{ check_mk_logwatch_plugin }}"
   check_mode: false
   tags:

@@ -74,8 +74,10 @@ checkmkagent_required_packages: {}
 # deprecated list of additional packages to install
 # checkmkagent_required_packages: []
 
-# list of all plugins to be downloaded and installed from main check_mk site
-check_mk_plugins: []
+# dict of all plugins to be downloaded and installed from main check_mk site
+check_mk_plugins: {}
+# deprecated list of all plugins to be downloaded and installed from main check_mk site
+# check_mk_plugins: []
 
 # list of all local plugins to be installed
 # in the role we have included 2 plugins
