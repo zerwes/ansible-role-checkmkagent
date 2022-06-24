@@ -15,6 +15,16 @@
     check_mk_plugins: "{ 'deprecated' : {{ check_mk_plugins }} }"
   when: check_mk_plugins | type_debug == "list"
 
+- name: convert deprecated format from list to dict for check_mk_local_plugins
+  set_fact:
+    check_mk_local_plugins: "{ 'deprecated' : {{ check_mk_local_plugins }} }"
+  when: check_mk_local_plugins | type_debug == "list"
+
+- name: convert deprecated format from list to dict for check_mk_local_cfg
+  set_fact:
+    check_mk_local_cfg: "{ 'deprecated' : {{ check_mk_local_cfg }} }"
+  when: check_mk_local_cfg | type_debug == "list"
+
 - name: fetch agent page from checkmk server
   delegate_to: localhost
   uri:
@@ -221,7 +231,7 @@
     owner: root
     group: root
     mode: 0400
-  with_items: "{{ check_mk_local_cfg }}"
+  with_items: "{{ check_mk_local_cfg.values() | list | flatten }}"
 
 - name: Copy local check_mk checks
   copy:
@@ -230,6 +240,6 @@
     owner: root
     group: root
     mode: 0755
-  with_items: "{{ check_mk_local_plugins }}"
+  with_items: "{{ check_mk_local_plugins.values() | list | flatten }}"
 
 # vim: tabstop=2 expandtab shiftwidth=2 softtabstop=2 smartindent nu ft=yaml

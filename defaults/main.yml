@@ -79,15 +79,19 @@ check_mk_plugins: {}
 # deprecated list of all plugins to be downloaded and installed from main check_mk site
 # check_mk_plugins: []
 
-# list of all local plugins to be installed
+# dict of all local plugins to be installed
 # in the role we have included 2 plugins
 # check_mk_local_plugins:
 #   - check_apt-update-success
 #   - check_reboot
-check_mk_local_plugins: []
+check_mk_local_plugins: {}
+# deprecated list of all local plugins to be installed
+# check_mk_local_plugins: []
 
-# list of local cfg files
-check_mk_local_cfg: []
+# dict of local cfg files
+check_mk_local_cfg: {}
+# deprecated list of local cfg files
+# check_mk_local_cfg: []
 
 # method how the agent should be started
 # check_mk_agent_use_xinetd and check_mk_agent_use_systemd are mutualy exclusive
