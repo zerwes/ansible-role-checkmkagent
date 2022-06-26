@@ -29,6 +29,7 @@ check_mk_agent_use_systemd: false
 check_mk_agent_use_xinetd: true
 # install and configure logwatch
 check_mk_logwatch: true
+# you can use dicts instead of lists (see issue #12)
 check_mk_logwatch_syslog_patterns:
   all:
     - I softdog
