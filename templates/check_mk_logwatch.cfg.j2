@@ -31,7 +31,7 @@
  W sshd.*Corrupted MAC on input
 
 "/var/log/syslog" "/var/log/kern.log"
-{% for pattern in check_mk_logwatch_syslog_patterns %}
+{% for pattern in check_mk_logwatch_syslog_patterns.values() | list | flatten %}
  {{ pattern }}
 {% endfor %}
  I registered panic notifier

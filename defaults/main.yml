@@ -1,5 +1,30 @@
 # vim: tabstop=2 expandtab shiftwidth=2 softtabstop=2 smartindent nu
 ---
+# Notes on using *dicts* for defining lists:
+# As ansible is not merging lists, we use dicts
+# to define lists.
+# Only the values of the dict will be used.
+# This way you can merge the settings for different
+# environments.
+# Example:
+# basic settings
+# check_mk_XXX:
+#   all:
+#     - aa
+#     - ab
+#     - ac
+# and then for group x:
+# check_mk_XXX:
+#   x: xx
+#   y: yy
+# resulting in a list per host:
+#   - "aa"
+#   - "ab"
+#   - "ac"
+#   - "xx"
+#   - "yy"
+#
+# using the old list format will still work
 
 # define the hostname of the checkmk server
 # required for fetching the deb package fron the server
@@ -37,25 +62,36 @@ check_mk_logwatch_plugin: mk_logwatch_2.py
 # patterns for logwatch
 # example:
 # check_mk_logwatch_syslog_patterns:
-#   - I softdog
-#   - I hispanic
-check_mk_logwatch_syslog_patterns: []
+#   global:
+#     - I softdog
+#     - I hispanic
+check_mk_logwatch_syslog_patterns: {}
+# deprecated patterns for logwatch as list
+# check_mk_logwatch_syslog_patterns: []
 
-# list of additional packages to install
-checkmkagent_required_packages: []
+# dict of additional packages to install
+checkmkagent_required_packages: {}
+# deprecated list of additional packages to install
+# checkmkagent_required_packages: []
 
-# list of all plugins to be downloaded and installed from main check_mk site
-check_mk_plugins: []
+# dict of all plugins to be downloaded and installed from main check_mk site
+check_mk_plugins: {}
+# deprecated list of all plugins to be downloaded and installed from main check_mk site
+# check_mk_plugins: []
 
-# list of all local plugins to be installed
+# dict of all local plugins to be installed
 # in the role we have included 2 plugins
 # check_mk_local_plugins:
 #   - check_apt-update-success
 #   - check_reboot
-check_mk_local_plugins: []
+check_mk_local_plugins: {}
+# deprecated list of all local plugins to be installed
+# check_mk_local_plugins: []
 
-# list of local cfg files
-check_mk_local_cfg: []
+# dict of local cfg files
+check_mk_local_cfg: {}
+# deprecated list of local cfg files
+# check_mk_local_cfg: []
 
 # method how the agent should be started
 # check_mk_agent_use_xinetd and check_mk_agent_use_systemd are mutualy exclusive
