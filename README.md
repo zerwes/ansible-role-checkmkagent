@@ -30,6 +30,7 @@ check_mk_agent_use_xinetd: true
 # install and configure logwatch
 check_mk_logwatch: true
 check_mk_logwatch_syslog_patterns:
-  - I softdog
-  - I hispanic
+  all:
+    - I softdog
+    - I hispanic
 ```
