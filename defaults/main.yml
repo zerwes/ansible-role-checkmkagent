@@ -70,6 +70,18 @@ check_mk_logwatch_authlog_patterns: {}
 # deprecated patterns for logwatch as list
 # check_mk_logwatch_syslog_patterns: []
 
+# additional logwatch files
+# check_mk_logwatch_additional_files:
+#   filename: # filename may include the options to be applied
+#             # i.e. '/var/log/y.log maxlinesize=512 encoding=utf-8':
+#       - pattern list
+# example:
+# check_mk_logwatch_additional_files:
+#   /var/log/my.log:
+#     - W \[WARN\] nodeJS
+#     - C \[ERRORß] nodeJS
+check_mk_logwatch_additional_files: {}
+
 # dict of additional packages to install
 checkmkagent_required_packages: {}
 # deprecated list of additional packages to install
