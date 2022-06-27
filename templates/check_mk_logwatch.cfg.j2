@@ -78,3 +78,11 @@
 # CLUSTER yet_another_cluster
 #  192.168.1.0/24
 #  1762:0000:0000:0000:0000:0000:0000:0000/64
+
+{% for logfile, patterns in check_mk_logwatch_additional_files.items() | list %}
+{{ logfile }}
+{% for pattern in patterns %}
+ {{ pattern }}
+{% endfor %}
+# end of {{ logfile }}
+{% endfor %}
