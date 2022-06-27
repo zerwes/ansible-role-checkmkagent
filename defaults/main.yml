@@ -66,6 +66,7 @@ check_mk_logwatch_plugin: mk_logwatch_2.py
 #     - I softdog
 #     - I hispanic
 check_mk_logwatch_syslog_patterns: {}
+check_mk_logwatch_authlog_patterns: {}
 # deprecated patterns for logwatch as list
 # check_mk_logwatch_syslog_patterns: []
 
