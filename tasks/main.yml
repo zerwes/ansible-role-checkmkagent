@@ -222,7 +222,7 @@
     owner: root
     group: root
     mode: 0755
-  with_items: "{{ check_mk_plugins }}"
+  with_items: "{{ check_mk_plugins.values() | list | flatten }}"
 
 - name: Copy local check_mk cfg files
   copy:
