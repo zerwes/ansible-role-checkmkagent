@@ -79,7 +79,7 @@ check_mk_logwatch_authlog_patterns: {}
 # check_mk_logwatch_additional_files:
 #   /var/log/my.log:
 #     - W \[WARN\] nodeJS
-#     - C \[ERRORß] nodeJS
+#     - C \[ERROR\] nodeJS
 check_mk_logwatch_additional_files: {}
 
 # dict of additional packages to install
