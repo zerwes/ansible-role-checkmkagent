@@ -1,33 +1,33 @@
 ---
 
 - name: convert deprecated format from list to dict for checkmkagent_required_packages
-  set_fact:
+  ansible.builtin.set_fact:
     checkmkagent_required_packages: "{ 'deprecated' : {{ checkmkagent_required_packages }} }"
   when: checkmkagent_required_packages | type_debug == "list"
 
 - name: convert deprecated format from list to dict for check_mk_logwatch_syslog_patterns
-  set_fact:
+  ansible.builtin.set_fact:
     check_mk_logwatch_syslog_patterns: "{ 'deprecated' : {{ check_mk_logwatch_syslog_patterns }} }"
   when: check_mk_logwatch_syslog_patterns | type_debug == "list"
 
 - name: convert deprecated format from list to dict for check_mk_plugins
-  set_fact:
+  ansible.builtin.set_fact:
     check_mk_plugins: "{ 'deprecated' : {{ check_mk_plugins }} }"
   when: check_mk_plugins | type_debug == "list"
 
 - name: convert deprecated format from list to dict for check_mk_local_plugins
-  set_fact:
+  ansible.builtin.set_fact:
     check_mk_local_plugins: "{ 'deprecated' : {{ check_mk_local_plugins }} }"
   when: check_mk_local_plugins | type_debug == "list"
 
 - name: convert deprecated format from list to dict for check_mk_local_cfg
-  set_fact:
+  ansible.builtin.set_fact:
     check_mk_local_cfg: "{ 'deprecated' : {{ check_mk_local_cfg }} }"
   when: check_mk_local_cfg | type_debug == "list"
 
 - name: fetch agent page from checkmk server
   delegate_to: localhost
-  uri:
+  ansible.builtin.uri:
     url: "{{ checkmk_proto }}://{{ checkmk_hostname }}/{{ checkmk_path }}/"
     return_content: true
   check_mode: false
@@ -36,7 +36,7 @@
     - checkmk_agent_version is not defined
 
 - name: register agent version from server
-  set_fact:
+  ansible.builtin.set_fact:
     _checkmk_agent_deb: '{{ checkmkagents.content | regex_search("check-mk-agent_[0-9]\.[0-9]\.[0-9]p[0-9]+-1_all.deb") }}'
   when:
     - checkmk_agent_version is not defined
@@ -44,14 +44,14 @@
     - checkmkagents.status == 200
 
 - name: extract version from deb listed by the server
-  set_fact:
+  ansible.builtin.set_fact:
     checkmk_agent_version: '{{ _checkmk_agent_deb | regex_search("[0-9]\.[0-9]\.[0-9]p[0-9]+") }}'
   when:
     - checkmk_agent_version is not defined
     - _checkmk_agent_deb is defined
 
 - name: ensure we could determine the checkmk_agent_version
-  assert:
+  ansible.builtin.assert:
     quiet: true
     msg: "checkmk_agent_version can not be determined from server"
     that:
@@ -60,7 +60,7 @@
 
 - name: fetch {{ checkmk_agent_deb }}
   delegate_to: localhost
-  get_url:
+  ansible.builtin.get_url:
     url: "{{ checkmk_proto }}://{{ checkmk_hostname }}/{{ checkmk_path }}/{{ checkmk_agent_deb }}"
     dest: "{{ _local_tmp }}/{{ checkmk_agent_deb }}"
     force: false
@@ -70,7 +70,7 @@
     - molecule-notest
 
 - name: upload {{ checkmk_agent_deb }}
-  copy:
+  ansible.builtin.copy:
     src: "{{ _local_tmp }}/{{ checkmk_agent_deb }}"
     dest: /var/tmp/{{ checkmk_agent_deb }}
     force: false
@@ -80,7 +80,7 @@
     - molecule-notest
 
 - name: Install check_mk agent on Debian-based systems
-  apt:
+  ansible.builtin.apt:
     deb: /var/tmp/{{ checkmk_agent_deb }}
   when:
     - ansible_distribution == "Debian" or ansible_distribution == "Ubuntu"
@@ -88,28 +88,28 @@
     - not ansible_check_mode
 
 - name: install required packages
-  apt:
+  ansible.builtin.apt:
     name: "{{ checkmkagent_required_packages.values() | list | flatten }}"
     update_cache: true
     cache_valid_time: 3600
 
 - name: purge check-mk-agent-logwatch
-  apt:
+  ansible.builtin.apt:
     name: check-mk-agent-logwatch
     state: absent
 
 - name: fail if both variants enabled
-  fail:
+  ansible.builtin.fail:
     msg: "both variants set to {{ check_mk_agent_use_xinetd }}"
   when: check_mk_agent_use_xinetd == check_mk_agent_use_systemd
 
 - name: register check_mk.socket state
-  systemd:
+  ansible.builtin.systemd:
     name: check_mk.socket
   register: check_mk_socket
 
 - name: stop check_mk.socket
-  systemd:
+  ansible.builtin.systemd:
     name: check_mk.socket
     state: stopped
     enabled: false
@@ -120,14 +120,14 @@
     - check_mk_socket.status.ActiveState == 'active'
 
 - name: install xinetd
-  apt:
+  ansible.builtin.apt:
     name: xinetd
     update_cache: true
     cache_valid_time: 3600
   when: check_mk_agent_use_xinetd
 
 - name: checkmk service file
-  template:
+  ansible.builtin.template:
     src: check_mk.xinetd.j2
     dest: /etc/xinetd.d/check_mk
     mode: 0644
@@ -135,19 +135,19 @@
   register: xinetdcfgchanged
 
 - name: remove checkmk service file
-  file:
+  ansible.builtin.file:
     path: /etc/xinetd.d/check_mk
     state: absent
   when: check_mk_agent_use_systemd
 
 - name: register xinetd desired service state
-  set_fact:
+  ansible.builtin.set_fact:
     _xinetd_service_state: restarted
   when:
     - check_mk_agent_use_systemd or (check_mk_agent_use_xinetd and xinetdcfgchanged.changed | default(false))
 
 - name: ensure xinetd service state is {{ _xinetd_service_state | default('started') }}
-  service:
+  ansible.builtin.service:
     name: xinetd
     state: "{{ _xinetd_service_state | default('started') }}"
   ignore_errors: "{{ check_mk_agent_use_systemd }}"
@@ -155,7 +155,7 @@
     - not purge_xinetd | default(False)
 
 - name: purge xinetd
-  apt:
+  ansible.builtin.apt:
     name: xinetd
     state: absent
     purge: true
@@ -164,7 +164,7 @@
     - purge_xinetd | default(False)
 
 - name: start check_mk.socket
-  systemd:
+  ansible.builtin.systemd:
     name: check_mk.socket
     state: started
     enabled: true
@@ -176,7 +176,7 @@
 
 - name: Copy check plugins from main check_mk site
   delegate_to: localhost
-  get_url:
+  ansible.builtin.get_url:
     url: "{{ checkmk_proto }}://{{ checkmk_hostname }}/{{ checkmk_path }}/plugins/{{ item }}"
     dest: "{{ _local_tmp }}/{{ item }}"
     force: false
@@ -189,7 +189,7 @@
     - molecule-notest
 
 - name: "Upload {{ check_mk_logwatch_plugin }} plugin"
-  copy:
+  ansible.builtin.copy:
     src: "{{ _local_tmp }}/{{ item }}"
     dest: "/usr/lib/check_mk_agent/plugins/{{ item }}"
     owner: root
@@ -202,12 +202,12 @@
     - molecule-notest
 
 - name: "{{ check_mk_logwatch_plugin }} requires python2"
-  apt:
+  ansible.builtin.apt:
     name: python2
   when: check_mk_logwatch
 
 - name: Configure logwatch plugin
-  template:
+  ansible.builtin.template:
     src: check_mk_logwatch.cfg.j2
     dest: /etc/check_mk/logwatch.cfg
     owner: root
@@ -216,7 +216,7 @@
   when: check_mk_logwatch
 
 - name: Upload check plugins
-  copy:
+  ansible.builtin.copy:
     src: "{{ _local_tmp }}/{{ item }}"
     dest: "/usr/lib/check_mk_agent/plugins/{{ item }}"
     owner: root
@@ -225,7 +225,7 @@
   with_items: "{{ check_mk_plugins.values() | list | flatten }}"
 
 - name: Copy local check_mk cfg files
-  copy:
+  ansible.builtin.copy:
     src: "{{ item }}"
     dest: "/etc/check_mk/{{ item | basename }}"
     owner: root
@@ -234,7 +234,7 @@
   with_items: "{{ check_mk_local_cfg.values() | list | flatten }}"
 
 - name: Copy local check_mk checks
-  copy:
+  ansible.builtin.copy:
     src: "{{ item }}"
     dest: "/usr/lib/check_mk_agent/local/{{ item | basename }}"
     owner: root
