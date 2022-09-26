@@ -8,7 +8,7 @@ on:
     - cron: "10 6 * * 1"
 jobs:
   ansible-lates:
-    name: molecule test using latest ansible version
+    name: latest ansible version
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -27,7 +27,7 @@ jobs:
           PY_COLORS: '1'
           ANSIBLE_FORCE_COLOR: '1'
   ansible-pinned:
-    name: molecule test using a pinned ansible version
+    name: pinned ansible version
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -46,7 +46,7 @@ jobs:
           PY_COLORS: '1'
           ANSIBLE_FORCE_COLOR: '1'
   ansible-legacy:
-    name: molecule test using the legacy ansible version 2.9
+    name: legacy ansible version
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
