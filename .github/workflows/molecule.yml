@@ -7,7 +7,7 @@ on:
   schedule:
     - cron: "10 6 * * 1"
 jobs:
-  ansible-lates:
+  ansible-latest:
     name: latest ansible version
     runs-on: ubuntu-latest
     steps:
