@@ -1,8 +1,8 @@
 ---
 - name: switch to systemd
   hosts: all
-  ansible_python_interpreter: /usr/bin/python3
   vars:
+    ansible_python_interpreter: /usr/bin/python3
     check_mk_agent_use_xinetd: false
     check_mk_agent_use_systemd: true
   tasks:
