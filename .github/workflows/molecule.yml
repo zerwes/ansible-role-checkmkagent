@@ -8,6 +8,7 @@ on:
     - cron: "10 6 * * 1"
 jobs:
   ansible-lates:
+    name: molecule test using latest ansible version
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -25,7 +26,8 @@ jobs:
         env:
           PY_COLORS: '1'
           ANSIBLE_FORCE_COLOR: '1'
-  ansible-620:
+  ansible-pinned:
+    name: molecule test using a pinned ansible version
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -36,7 +38,7 @@ jobs:
           python-version: 3.9
 
       - name: Install test dependencies.
-        run: pip3 install "ansible==6.2.0" "molecule[docker,lint]" yamllint ansible-lint requests
+        run: pip3 install "ansible==6.2.0" "molecule[docker,lint]==3.5.2" "yamllint==1.26.0" "ansible-lint==6.4.0" requests
 
       - name: run molecule tests
         run: molecule test
@@ -44,6 +46,7 @@ jobs:
           PY_COLORS: '1'
           ANSIBLE_FORCE_COLOR: '1'
   ansible-legacy:
+    name: molecule test using the legacy ansible version 2.9
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -54,7 +57,7 @@ jobs:
           python-version: 3.9
 
       - name: Install test dependencies.
-        run: pip3 install "ansible==2.9.27" "molecule[docker,lint]==3.2.3" yamllint "ansible-lint==4.2.0" requests
+        run: pip3 install "ansible==2.9.27" "molecule[docker,lint]==3.2.3" "yamllint==1.24.2" "ansible-lint==4.2.0" requests
 
       - name: run molecule tests
         run: molecule test
