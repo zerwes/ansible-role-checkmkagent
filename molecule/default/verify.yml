@@ -2,6 +2,7 @@
 - name: switch back from systemd to xinetd
   hosts: all
   vars:
+    ansible_python_interpreter: /usr/bin/python3
     check_mk_agent_use_xinetd: true
     check_mk_agent_use_systemd: false
   tasks:

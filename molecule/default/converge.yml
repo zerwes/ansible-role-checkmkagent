@@ -1,7 +1,12 @@
 ---
 - name: Converge
   hosts: all
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
   pre_tasks:
+    - name: print ansible version
+      ansible.builtin.debug:
+        msg: "{{ ansible_version.full }}"
     - name: "include role vars ..."
       include_vars:
         file: ../../defaults/main.yml
