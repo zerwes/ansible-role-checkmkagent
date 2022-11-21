@@ -93,10 +93,11 @@ check_mk_plugins: {}
 # check_mk_plugins: []
 
 # dict of all local plugins to be installed
-# in the role we have included 2 plugins
+# in the role we have included some plugins
 # check_mk_local_plugins:
 #   - check_apt-update-success
 #   - check_reboot
+#   - check_keepalived
 check_mk_local_plugins: {}
 # deprecated list of all local plugins to be installed
 # check_mk_local_plugins: []
