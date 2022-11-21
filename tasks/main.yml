@@ -181,6 +181,7 @@
     dest: "{{ _local_tmp }}/{{ item }}"
     force: false
     mode: 0600
+  when: item | bool
   with_items:
     - "{{ check_mk_plugins.values() | list | flatten }}"
     - "{{ check_mk_logwatch_plugin }}"
@@ -231,6 +232,7 @@
     owner: root
     group: root
     mode: 0400
+  when: item | bool
   with_items: "{{ check_mk_local_cfg.values() | list | flatten }}"
 
 - name: Copy local check_mk checks
@@ -240,6 +242,7 @@
     owner: root
     group: root
     mode: 0755
+  when: item | bool
   with_items: "{{ check_mk_local_plugins.values() | list | flatten }}"
 
 # vim: tabstop=2 expandtab shiftwidth=2 softtabstop=2 smartindent nu ft=yaml
