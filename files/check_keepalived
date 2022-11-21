@@ -1,0 +1,65 @@
+#!/bin/bash
+# vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4 smartindent nu ft=bash
+
+declare -r PIDFILE=/var/run/keepalived.pid
+
+if [ -f "$PIDFILE" ]; then
+	declare -ri PID=$(cat "$PIDFILE")
+	ps -p $PID --no-headers | grep -q keepalived
+	if [ $? -gt 0 ]; then
+		echo "3 keepalived_running - CRITICAL - no process for pid $PID"
+	else
+		echo "0 keepalived_running - OK - keepalived process for pid $PID found"
+		rm -f /tmp/keepalived.data
+		kill -$(keepalived --signum=DATA) $PID
+        sync
+		if [ -f /tmp/keepalived.data ]; then
+			instance=""
+		    while read line; do
+                arg="${line/ = */}"
+                value="${line//* = /}"
+                if [ "$arg" = "VRRP Instance" ]; then
+                    if [ -n "$instance" ]; then
+                        echo "$vrrp_ecode keepalived_vrrp_$instance ecode=$vrrp_ecode;1;2;;|master=$vrrp_state_master;;;0;1|backup=$vrrp_state_backup;;;0;1|prio=$vrrp_prio;;;;|eprio=$vrrp_eprio;;;;  $vrrp_status - instance:$instance id:$vrrp_id; state:$vrrp_state"
+                    else
+                        vrrp_status="OK"
+                        declare -i vrrp_ecode=0
+                        vrrp_state="UNDEFINED"
+                        declare -i vrrp_state_master=0
+                        declare -i vrrp_state_backup=0
+                        declare -i vrrp_prio=0
+                        declare -i vrrp_eprio=0
+                        declare -i vrrp_id=0
+                    fi
+                    instance=$value
+                elif [ "$arg" = "State" ]; then
+                    vrrp_state="$value"
+                    if [ "$vrrp_state" = "MASTER" ]; then
+                        vrrp_ecode=0
+                        vrrp_state_master=1
+                    elif [ "$vrrp_state" = "BACKUP" ]; then
+                        vrrp_ecode=0
+                        vrrp_state_backup=1
+                    elif [ "$vrrp_state" = "FAULT" ]; then
+                        vrrp_ecode=2
+                        vrrp_status="CRITICAL"
+                    else
+                        vrrp_ecode=3
+                        vrrp_status="UNKNOWN"
+                    fi
+                elif [ "$arg" = "Virtual Router ID" ]; then
+                    vrrp_id=$value
+                elif [ "$arg" = "Priority" ]; then
+                    vrrp_prio=$value
+                elif [ "$arg" = "Effective priority" ]; then
+                    vrrp_eprio=$value
+                fi
+			done < <(sed '1,/-< VRRP Topology >-/d;/------</,$d' /tmp/keepalived.data | grep '^ *VRRP Instance\|State\|Priority\|Virtual Router ID\|Effective priority')
+            if [ -n "$instance" ]; then
+                echo "$vrrp_ecode keepalived_vrrp_$instance ecode=$vrrp_ecode;1;2;;|master=$vrrp_state_master;;;0;1|backup=$vrrp_state_backup;;;0;1|prio=$vrrp_prio;;;;|eprio=$vrrp_eprio;;;;  $vrrp_status - instance:$instance id:$vrrp_id; state:$vrrp_state"
+            fi
+		fi
+	fi
+else
+	echo "3 keepalived_running - CRITICAL - no pidfile found"
+fi
