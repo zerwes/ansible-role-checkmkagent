@@ -84,7 +84,7 @@
     deb: /var/tmp/{{ checkmk_agent_deb }}
   when:
     - ansible_distribution == "Debian" or ansible_distribution == "Ubuntu"
-    - not skip_checkmk_agent_deb|default(false)
+    - not skip_checkmk_agent_deb | default(false)
     - not ansible_check_mode
 
 - name: install required packages
