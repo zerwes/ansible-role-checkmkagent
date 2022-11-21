@@ -117,7 +117,7 @@
     daemon_reload: true
   when:
     - check_mk_agent_use_xinetd
-    - check_mk_socket.status.ActiveState == 'active'
+    - check_mk_socket.status.ActiveState in ['active', 'failed']
 
 - name: register cmk-agent-ctl-daemon state
   ansible.builtin.systemd:
@@ -133,7 +133,7 @@
     daemon_reload: true
   when:
     - check_mk_agent_use_xinetd
-    - check_mk_agent_ctl_daemon.status.ActiveState == 'active'
+    - check_mk_agent_ctl_daemon.status.ActiveState in ['active', 'failed']
 
 - name: install xinetd
   ansible.builtin.apt:
