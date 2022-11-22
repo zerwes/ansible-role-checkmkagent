@@ -186,6 +186,17 @@
     - check_mk_agent_use_systemd
     - purge_xinetd | default(False)
 
+- name: start cmk-agent-ctl-daemon
+  ansible.builtin.systemd:
+    name: cmk-agent-ctl-daemon
+    state: started
+    enabled: true
+    masked: false
+    daemon_reload: true
+  when:
+    - check_mk_agent_use_systemd
+    - check_mk_agent_ctl_daemon.status.ActiveState == 'inactive'
+
 - name: start check_mk.socket
   ansible.builtin.systemd:
     name: check_mk.socket
