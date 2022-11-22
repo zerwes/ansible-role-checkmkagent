@@ -26,7 +26,7 @@ provisioner:
   inventory:
     host_vars:
       instance:
-        checkmk_agent_version: 2.0.0p25
+        checkmk_agent_version: 2.1.0p16
         checkmk_hostname: 127.0.0.1
         download_checkmk_agent_deb: false
         check_mk_logwatch_plugin:
