@@ -149,7 +149,7 @@
     cache_valid_time: 3600
   when: check_mk_agent_use_xinetd
 
-- name: checkmk service file
+- name: install xinetd checkmk service file
   ansible.builtin.template:
     src: check_mk.xinetd.j2
     dest: /etc/xinetd.d/check_mk
@@ -157,7 +157,7 @@
   when: check_mk_agent_use_xinetd
   register: xinetdcfgchanged
 
-- name: remove checkmk service file
+- name: remove xinetd checkmk service file
   ansible.builtin.file:
     path: /etc/xinetd.d/check_mk
     state: absent
