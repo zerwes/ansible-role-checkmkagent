@@ -196,6 +196,7 @@
   when:
     - check_mk_agent_use_systemd
     - check_mk_agent_ctl_daemon.status.ActiveState == 'inactive'
+    - checkmk_agent_version is version_compare('2.1.0', '>=')
 
 - name: start check_mk.socket
   ansible.builtin.systemd:
@@ -207,6 +208,7 @@
   when:
     - check_mk_agent_use_systemd
     - check_mk_socket.status.ActiveState == 'inactive'
+    - checkmk_agent_version is version_compare('2.1.0', '<')
 
 - name: Copy check plugins from main check_mk site
   delegate_to: localhost
