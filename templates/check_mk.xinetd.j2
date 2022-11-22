@@ -5,11 +5,14 @@ service check_mk
 	port           = 6556
 	socket_type    = stream
 	protocol       = tcp
+	# comment this out in order to listen on IPv6 too, if available
 	flags          = IPv4
 	wait           = no
 	user           = root
 	server         = /usr/bin/check_mk_agent
 	only_from      = 127.0.0.1 {{ checkmk_ip }}
+	# see https://github.com/tribe29/checkmk/pull/157
+	per_source     = 3
 	disable	       = no
 }
 
