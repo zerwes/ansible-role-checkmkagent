@@ -135,13 +135,6 @@
     - check_mk_agent_use_xinetd
     - check_mk_agent_ctl_daemon.status.ActiveState in ['active', 'failed']
 
-- name: debug check_mk_socket
-  ansible.builtin.debug:
-    var: check_mk_socket
-- name: debug check_mk_agent_ctl_daemon
-  ansible.builtin.debug:
-    var: check_mk_agent_ctl_daemon
-
 - name: install xinetd
   ansible.builtin.apt:
     name: xinetd
