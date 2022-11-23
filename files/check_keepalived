@@ -70,7 +70,7 @@ if [ -f "$PIDFILE" ]; then
                         sgroup_ecode=2
                         sgroup_status="CRITICAL"
                     fi
-                    echo "$sgroup_ecode keepalived_vrrpgroup_$sgroup_name ecode=$sgroup_ecode;1;2;; - VRRP Sync group $sgroup_name state: $sgroup_state"
+                    echo "$sgroup_ecode keepalived_vrrpgroup_$sgroup_name ecode=$sgroup_ecode;1;2;; sgroup_status - VRRP Sync group $sgroup_name state: $sgroup_state"
                 done < <(sed '1,/-< VRRP Sync groups >-/d; /------</,$d; /VRRP Sync Group/!d' /tmp/keepalived.data)
             fi
         fi
