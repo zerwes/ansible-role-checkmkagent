@@ -40,7 +40,7 @@ if [ -f "$PIDFILE" ]; then
                     elif [ "$vrrp_state" = "BACKUP" ]; then
                         vrrp_ecode=0
                         vrrp_state_backup=1
-                    elif [ "$vrrp_state" = "FAULT" ]; then
+                    elif [ "$vrrp_state" = "FAULT" -o "$vrrp_state" = "STOP" ]; then
                         vrrp_ecode=2
                         vrrp_status="CRITICAL"
                     else
