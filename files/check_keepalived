@@ -58,6 +58,22 @@ if [ -f "$PIDFILE" ]; then
             if [ -n "$instance" ]; then
                 echo "$vrrp_ecode keepalived_vrrp_$instance ecode=$vrrp_ecode;1;2;;|master=$vrrp_state_master;;;0;1|backup=$vrrp_state_backup;;;0;1|prio=$vrrp_prio;;;;|eprio=$vrrp_eprio;;;;  $vrrp_status - instance:$instance id:$vrrp_id; state:$vrrp_state"
             fi
+            if $(grep -q -e '-< VRRP Sync groups >-' /tmp/keepalived.data); then
+                while read syncgroupline ; do
+                    declare -i sgroup_ecode=3
+                    sgroup_status="UNKNOWN"
+                    sgroup_name=$(echo $syncgroupline | sed 's/.* = *//g; s/,.*$//g')
+                    sgroup_state=$(echo $syncgroupline | sed 's/.*, //g')
+                    if [ "$sgroup_state" = "MASTER" -o "$sgroup_state" = "BACKUP" ]; then
+                        sgroup_ecode=0
+                        sgroup_status="OK"
+                    elif [ "$sgroup_state" = "FAULT" -o "$sgroup_state" = "STOP" ]; then
+                        sgroup_ecode=2
+                        sgroup_status="CRITICAL"
+                    fi
+                    echo "$sgroup_ecode keepalived_vrrpgroup_$sgroup_name ecode=$sgroup_ecode;1;2;; - VRRP Sync group $sgroup_name state: $sgroup_state"
+                done < <(sed '1,/-< VRRP Sync groups >-/d; /------</,$d; /VRRP Sync Group/!d' /tmp/keepalived.data)
+            fi
         fi
     fi
 else
