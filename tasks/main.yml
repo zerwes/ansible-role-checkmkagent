@@ -234,7 +234,9 @@
 - name: "{{ check_mk_logwatch_plugin }} requires python2"
   ansible.builtin.apt:
     name: python2
-  when: check_mk_logwatch
+  when:
+    - check_mk_logwatch
+    - check_mk_logwatch_plugin == 'mk_logwatch_2.py'
 
 - name: Configure logwatch plugin
   ansible.builtin.template:
