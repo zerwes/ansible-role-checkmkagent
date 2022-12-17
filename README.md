@@ -21,6 +21,7 @@ In the role we have included some (partialy debian specific) check plugins (`che
   * `check_apt-update-success` : check if the last apt update process was successful and not too long ago
   * `check_reboot` : check if a reboot is required after a apt update
   * `check_keepalived` : check the status of keepalive (global an per vrrp instance)
+  * `check_samba_repl`: check samba DC replication status
 
 ## example configuration
 

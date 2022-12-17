@@ -1,0 +1,14 @@
+#! /bin/bash
+
+declare -i ECODE=3
+declare STATUS=UNDEFINED
+
+REPL=$(samba-tool drs showrepl --summary 2>&1)
+if [ "$REPL" = "[ALL GOOD]" ]; then
+	ECODE=0
+	STATUS=OK
+else
+	ECODE=2
+	STATUS=CRITICAL
+fi
+echo "$ECODE samba_drs_replication - $STATUS - $REPL"
