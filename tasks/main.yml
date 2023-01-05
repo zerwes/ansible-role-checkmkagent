@@ -231,6 +231,16 @@
   tags:
     - molecule-notest
 
+- name: "remove unused logwatch plugin ..."
+  ansible.builtin.file:
+    path: "/usr/lib/check_mk_agent/plugins/{{ item }}"
+    state: absent
+  with_items:
+    - mk_logwatch.py
+    - mk_logwatch_2.py
+  when:
+    - not (check_mk_logwatch | bool and check_mk_logwatch_plugin == item)
+
 - name: "{{ check_mk_logwatch_plugin }} requires python2"
   ansible.builtin.apt:
     name: python2
