@@ -1,0 +1,41 @@
+#! /bin/bash
+
+declare -i RETCODE=0
+declare -i EXITCODE=0
+
+# you can define the list of jails to monitor here
+#declare -r JAILS="exchange tsg nextcloud bruteforce"
+# or automatically monitor all jails
+declare -r JAILS=$(fail2ban-client status | sed '/Jail list:/!d; s/^.*Jail list:\s*//g; s/,\s*/ /g')
+
+for jail in $JAILS; do
+
+	fail2ban-client status ${jail} > /tmp/fail2ban-${jail}.status 2>&1
+
+	RETCODE=$?
+	EXITCODE=0
+
+	if [ $RETCODE -gt 0 ]; then
+		EXITCODE=2
+	fi
+
+	FILELIST=$(sed '/File list:/!d;s/^.*:\s*//g;' /tmp/fail2ban-${jail}.status)
+	STATUSFILECONT=$(sed 's/|//g;s/`//g' /tmp/fail2ban-${jail}.status)
+
+	if [ $EXITCODE -eq 0 ] ; then
+		if [ -n "$FILELIST" ]; then
+			statustxt="OK"
+			txt="$(echo $STATUSFILECONT)  "
+		else
+			EXITCODE=1
+			txt="no log files listed: $(echo $STATUSFILECONT)"
+		fi
+		perf=$(sed '/^ *|/!d;/:/!d;/File list:/d;s/^.*- //g;s/ /_/g;s/:\s*/=/g;s/$/|/g;s/=|/=0|/g;' /tmp/fail2ban-${jail}.status)
+	else
+		statustxt="CRITICAL"
+		perf=""
+		txt="$(echo $STATUSFILECONT)  "
+	fi
+
+	echo "$EXITCODE fail2ban-${jail} "$(echo $perf | sed 's/ //g;s/|$//g')" $statustxt - $txt"
+done
