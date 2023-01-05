@@ -227,7 +227,7 @@
     mode: 0755
   with_items: "{{ check_mk_logwatch_plugin }}"
   diff: no
-  when: check_mk_logwatch
+  when: check_mk_logwatch | bool
   tags:
     - molecule-notest
 
@@ -255,7 +255,7 @@
     owner: root
     group: root
     mode: 0644
-  when: check_mk_logwatch
+  when: check_mk_logwatch | bool
 
 - name: Upload check plugins
   ansible.builtin.copy:
