@@ -27,7 +27,7 @@
 # using the old list format will still work
 
 # define the hostname of the checkmk server
-# required for fetching the deb package fron the server
+# required for fetching the deb package from the server
 # the server must be reacheble from the control machine, not from the target host
 # checkmk_hostname:
 
