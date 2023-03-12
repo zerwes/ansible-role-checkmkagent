@@ -41,7 +41,7 @@ checkmk_proto: http
 checkmk_ip: 127.0.0.1
 
 # path part of the uri to get the agents from the checkmk server
-# mostli SITENAME/check_mk/agents
+# mostly SITENAME/check_mk/agents
 checkmk_path: "SITENAME/check_mk/agents"
 
 # optionaly define a hardcoded version of the agent in order to prevent upgrades
