@@ -19,7 +19,7 @@ jobs:
           python-version: 3.9
 
       - name: Install test dependencies.
-        run: pip3 install ansible "molecule[docker,lint]<5.0.0" yamllint ansible-lint "requests<2.2.29"
+        run: pip3 install ansible "molecule[docker,lint]<5.0.0" yamllint ansible-lint requests
 
       - name: run molecule tests
         run: molecule test
@@ -38,7 +38,7 @@ jobs:
           python-version: 3.9
 
       - name: Install test dependencies.
-        run: pip3 install "ansible==7.4.0" "molecule[docker,lint]==3.5.2" "yamllint==1.26.0" "ansible-lint==6.4.0" "requests<2.2.29"
+        run: pip3 install "ansible==7.4.0" "molecule[docker,lint]==3.5.2" "yamllint==1.26.0" "ansible-lint==6.4.0" requests
 
       - name: run molecule tests
         run: molecule test
@@ -57,7 +57,7 @@ jobs:
           python-version: 3.9
 
       - name: Install test dependencies.
-        run: pip3 install "ansible==2.9.27" "molecule[docker,lint]==3.2.3" "yamllint==1.24.2" "ansible-lint==4.2.0" "requests<2.2.29"
+        run: pip3 install "ansible==2.9.27" "molecule[docker,lint]==3.2.3" "yamllint==1.24.2" "ansible-lint==4.2.0" requests
 
       - name: run molecule tests
         run: molecule test
