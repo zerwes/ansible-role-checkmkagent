@@ -8,18 +8,18 @@ on:
     - cron: "10 6 * * 1"
 jobs:
   molecule:
-    name: latest ansible version
+    name: ansible
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        distro:
-          - debian11
-          - debian12
         ansible:
           - latest ansible version
           - pinned ansible version
           - legacy ansible version
+        distro:
+          - debian11
+          - debian12
         include:
           - ansible: latest ansible version
             pip3deps: 'ansible molecule "molecule-plugins[docker]" yamllint ansible-lint "requests<2.29" "urllib3<2"'
