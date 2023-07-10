@@ -14,9 +14,9 @@ jobs:
       fail-fast: false
       matrix:
         ansible:
-          - latest ansible version
-          - pinned ansible version
-          - legacy ansible version
+          - latest ansible 
+          - pinned ansible
+          - legacy ansible
         distro:
           - debian11
           - debian12
