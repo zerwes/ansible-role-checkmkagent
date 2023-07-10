@@ -7,7 +7,7 @@ on:
   schedule:
     - cron: "10 6 * * 1"
 jobs:
-  ansible-latest:
+  molecule:
     name: latest ansible version
     runs-on: ubuntu-latest
     strategy:
@@ -16,6 +16,17 @@ jobs:
         distro:
           - debian11
           - debian12
+        ansible:
+          - latest ansible version
+          - pinned ansible version
+          - legacy ansible version
+        include:
+          - ansible: latest ansible version
+            pip3deps: 'ansible molecule "molecule-plugins[docker]" yamllint ansible-lint "requests<2.29" "urllib3<2"'
+          - ansible: pinned ansible version
+            pip3deps: '"ansible==7.4.0" "molecule[docker,lint]==3.5.2" "yamllint==1.26.0" "ansible-lint==6.4.0" "requests<2.29" "urllib3<2"'
+          - ansible: legacy ansible version
+            pip3deps: '"ansible==2.9.27" "molecule[docker,lint]==3.2.3" "yamllint==1.24.2" "ansible-lint==4.2.0" "requests<2.29" "urllib3<2"'
     steps:
       - uses: actions/checkout@v2
 
@@ -25,59 +36,7 @@ jobs:
           python-version: 3.9
 
       - name: Install test dependencies.
-        run: pip3 install ansible molecule "molecule-plugins[docker]" yamllint ansible-lint "requests<2.29" "urllib3<2"
-
-      - name: run molecule tests
-        run: molecule test
-        env:
-          PY_COLORS: '1'
-          ANSIBLE_FORCE_COLOR: '1'
-          MOLECULE_DISTRO: ${{ matrix.distro }}
-  ansible-pinned:
-    name: pinned ansible version
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        distro:
-          - debian11
-          - debian12
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.9
-
-      - name: Install test dependencies.
-        run: pip3 install "ansible==7.4.0" "molecule[docker,lint]==3.5.2" "yamllint==1.26.0" "ansible-lint==6.4.0" "requests<2.29" "urllib3<2"
-
-      - name: run molecule tests
-        run: molecule test
-        env:
-          PY_COLORS: '1'
-          ANSIBLE_FORCE_COLOR: '1'
-          MOLECULE_DISTRO: ${{ matrix.distro }}
-  ansible-legacy:
-    name: legacy ansible version
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        distro:
-          - debian11
-          - debian12
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.9
-
-      - name: Install test dependencies.
-        run: pip3 install "ansible==2.9.27" "molecule[docker,lint]==3.2.3" "yamllint==1.24.2" "ansible-lint==4.2.0" "requests<2.29" "urllib3<2"
+        run: pip3 install ${{ matrix.pip3deps }}
 
       - name: run molecule tests
         run: molecule test
