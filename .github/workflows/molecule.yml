@@ -10,6 +10,12 @@ jobs:
   ansible-latest:
     name: latest ansible version
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        distro:
+          - debian11
+          - debian12
     steps:
       - uses: actions/checkout@v2
 
@@ -26,9 +32,16 @@ jobs:
         env:
           PY_COLORS: '1'
           ANSIBLE_FORCE_COLOR: '1'
+          MOLECULE_DISTRO: ${{ matrix.distro }}
   ansible-pinned:
     name: pinned ansible version
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        distro:
+          - debian11
+          - debian12
     steps:
       - uses: actions/checkout@v2
 
@@ -45,9 +58,16 @@ jobs:
         env:
           PY_COLORS: '1'
           ANSIBLE_FORCE_COLOR: '1'
+          MOLECULE_DISTRO: ${{ matrix.distro }}
   ansible-legacy:
     name: legacy ansible version
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        distro:
+          - debian11
+          - debian12
     steps:
       - uses: actions/checkout@v2
 
@@ -64,3 +84,4 @@ jobs:
         env:
           PY_COLORS: '1'
           ANSIBLE_FORCE_COLOR: '1'
+          MOLECULE_DISTRO: ${{ matrix.distro }}
