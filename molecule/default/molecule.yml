@@ -3,8 +3,8 @@ driver:
   name: docker
 platforms:
   - name: instance
-    image: debian:bullseye
-    dockerfile: Dockerfile.j2
+    image: debian:${MOLECULE_DISTRO:-debian11}
+    dockerfile: Dockerfile-${MOLECULE_DISTRO:-debian11}.j2
     privileged: true
     #command: /lib/systemd/systemd
     override_command: false
