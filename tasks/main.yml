@@ -266,6 +266,12 @@
     mode: 0755
   with_items: "{{ check_mk_plugins.values() | list | flatten }}"
 
+- name: Remove check plugins
+  ansible.builtin.file:
+    path: "/usr/lib/check_mk_agent/plugins/{{ item }}"
+    state: absent
+  with_items: "{{ check_mk_plugins_remove.values() | list | flatten }}"
+
 - name: Copy local check_mk cfg files
   ansible.builtin.copy:
     src: "{{ item }}"

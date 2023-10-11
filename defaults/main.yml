@@ -93,6 +93,9 @@ check_mk_plugins: {}
 # deprecated list of all plugins to be downloaded and installed from main check_mk site
 # check_mk_plugins: []
 
+# plugins that should be removed
+check_mk_plugins_remove: {}
+
 # dict of all local plugins to be installed
 # in the role we have included some plugins
 # check_mk_local_plugins:
