@@ -106,6 +106,9 @@ check_mk_local_plugins: {}
 # deprecated list of all local plugins to be installed
 # check_mk_local_plugins: []
 
+# plugins to remove
+check_mk_local_plugins_remove: {}
+
 # dict of local cfg files
 check_mk_local_cfg: {}
 # deprecated list of local cfg files
