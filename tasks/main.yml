@@ -162,7 +162,7 @@
   when:
     - check_mk_agent_use_systemd or (check_mk_agent_use_xinetd and xinetdcfgchanged.changed | default(false))
 
-- name: ensure xinetd service state is {{ _xinetd_service_state | default('started') }}
+- name: ensure xinetd service state is {{ _xinetd_service_state | default('started') }}  # noqa ignore-errors
   ansible.builtin.service:
     name: xinetd
     state: "{{ _xinetd_service_state | default('started') }}"
