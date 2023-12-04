@@ -20,6 +20,9 @@ jobs:
         distro:
           - debian11
           - debian12
+        checkmkversion:
+          - 2.2.0p14
+          - 2.1.0p36
         include:
           - ansible: latest
             pip3deps: 'ansible molecule "molecule-plugins[docker]" yamllint ansible-lint "requests<2.29" "urllib3<2"'
@@ -44,3 +47,4 @@ jobs:
           PY_COLORS: '1'
           ANSIBLE_FORCE_COLOR: '1'
           MOLECULE_DISTRO: ${{ matrix.distro }}
+          MOLECULE_CHECKMK_VERSION: ${{ matrix.checkmkversion }}
