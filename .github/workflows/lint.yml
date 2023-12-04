@@ -12,6 +12,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: run ansible-lint
-        uses: ansible/ansible-lint-action@v6.6.1
+        uses: ansible/ansible-lint-action@v6.22.0
         with:
           path: '.'
