@@ -19,6 +19,7 @@ a [checkmk server](https://checkmk.com/) reachable from the machine running ansi
 
 In the role we have included some (partialy debian specific) check plugins (`check_mk_local_plugins`):
   * `check_apt-update-success` : check if the last apt update process was successful and not too long ago
+  * `check_apt_updates_for_packages_on_hold` : check if there are updates available for packages set on hold
   * `check_reboot` : check if a reboot is required after a apt update
   * `check_keepalived` : check the status of keepalive (global an per vrrp instance)
   * `check_samba_repl`: check samba DC replication status
