@@ -1,0 +1,23 @@
+#!/bin/bash
+
+STATUS="OK"
+declare -i RET=0
+
+M=$(apt-mark showhold)
+M=${M//$'\n'/ }
+
+if [ -z "$M" ]; then
+	MSG="no packages on hold found"
+else
+	O=$(apt list -q  --upgradable $M 2>/dev/null | sed '1d')
+	O=${O//$'\n'/; }
+	if [ -n "$O" ]; then
+		STATUS="WARNING"
+		RET=1
+		MSG="$O"
+	else
+		MSG="$M"
+	fi
+fi
+
+echo "$RET UPDATES_FOR_HELD_PACKAGES - $STATUS - $MSG"

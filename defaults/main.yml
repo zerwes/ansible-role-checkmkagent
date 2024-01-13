@@ -101,6 +101,7 @@ check_mk_plugins_remove: {}
 # check_mk_local_plugins:
 #   all:
 #     - check_apt-update-success
+#     - check_apt_updates_for_packages_on_hold
 #     - check_reboot
 #     - check_keepalived
 #     - check_samba_repl
