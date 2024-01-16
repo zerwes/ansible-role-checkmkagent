@@ -106,6 +106,7 @@ check_mk_plugins_remove: {}
 #     - check_keepalived
 #     - check_samba_repl
 #     - check_fail2ban
+#     - check_zammad_health
 check_mk_local_plugins: {}
 # deprecated list of all local plugins to be installed
 # check_mk_local_plugins: []

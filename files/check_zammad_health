@@ -1,0 +1,63 @@
+#! /usr/bin/env python3
+# vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4 smartindent
+# pylint: disable=invalid-name,missing-module-docstring
+
+import os
+import subprocess
+import json
+import requests
+
+
+monitoring_token_file = "/opt/zammad/contrib/monitoring_token"
+monitoring_url = "http://127.0.0.1:3000/api/v1/monitoring/health_check"
+
+# at the script runs as root, the monitoring_token will be determined on the first run
+# if you update the token, just remove the monitoring_token_file
+monitoring_token = None
+
+try:
+    with open(monitoring_token_file, "rt", encoding='UTF-8') as mtfile:
+        monitoring_token = mtfile.read()
+except FileNotFoundError:
+    pr = subprocess.run(
+        ['/usr/bin/zammad', 'run', 'rails', 'r', "p Setting.get('monitoring_token')"],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        check=True
+        )
+    monitoring_token = pr.stdout.decode().strip('\n"')
+    if len(monitoring_token) > 0:
+        os.umask(0o177)
+        with open(monitoring_token_file, "wt", encoding='UTF-8') as mtfile:
+            mtfile.write(monitoring_token)
+
+ecode = 0
+status = 'OK'
+txt = ''
+perfdata = '-'
+
+if monitoring_token:
+    r = requests.get('%s?token=%s' % (monitoring_url, monitoring_token), timeout=5)
+    if r.status_code == 200:
+        hstst = json.loads(r.text)
+        #print(hstst)
+        # {'healthy': True, 'message': 'success', 'issues': [], 'actions': []}
+        perfdata = 'issues=%s' % len(hstst['issues'])
+        txt = hstst['message']
+        if not hstst['healthy']:
+            ecode = 1
+            status = 'WARNING'
+    else:
+        ecode = 2
+        status = 'CRITICAL'
+        txt = 'request failed: %s : %s' % (r.status_code, r.text,)
+else:
+    ecode = 3
+    status = 'UNKNOWN'
+    txt = 'unable to get monitoring token'
+
+if len(perfdata) > 0:
+    perfdata += '|'
+perfdata += 'e=%s;1;2;0;3' % ecode
+
+print('%s zammad_health_check %s %s - %s' % (ecode, perfdata, status, txt))
