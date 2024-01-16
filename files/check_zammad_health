@@ -34,15 +34,13 @@ except FileNotFoundError:
 ecode = 0
 status = 'OK'
 txt = ''
-perfdata = '-'
+perfdata = ''
 
 if monitoring_token:
-    r = requests.get('%s?token=%s' % (monitoring_url, monitoring_token), timeout=5)
+    r = requests.get(f'{monitoring_url}?token={monitoring_token}', timeout=5)
     if r.status_code == 200:
         hstst = json.loads(r.text)
-        #print(hstst)
-        # {'healthy': True, 'message': 'success', 'issues': [], 'actions': []}
-        perfdata = 'issues=%s' % len(hstst['issues'])
+        perfdata = f'issues={len(hstst["issues"])}'
         txt = hstst['message']
         if not hstst['healthy']:
             ecode = 1
@@ -50,7 +48,7 @@ if monitoring_token:
     else:
         ecode = 2
         status = 'CRITICAL'
-        txt = 'request failed: %s : %s' % (r.status_code, r.text,)
+        txt = f'request failed: {r.status_code} : {r.text}'
 else:
     ecode = 3
     status = 'UNKNOWN'
@@ -58,6 +56,6 @@ else:
 
 if len(perfdata) > 0:
     perfdata += '|'
-perfdata += 'e=%s;1;2;0;3' % ecode
+perfdata += f'e={ecode};1;2;0;3'
 
-print('%s zammad_health_check %s %s - %s' % (ecode, perfdata, status, txt))
+print(f'{ecode} zammad_health_check {perfdata} {status} - {txt}')
