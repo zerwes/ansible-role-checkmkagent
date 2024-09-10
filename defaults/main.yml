@@ -28,7 +28,7 @@
 
 # define the hostname of the checkmk server
 # required for fetching the deb package from the server
-# the server must be reacheble from the control machine, not from the target host
+# the server must be reachable from the control machine, not from the target host
 # checkmk_hostname:
 
 # protocoll used by the server (http|https)
