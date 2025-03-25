@@ -111,6 +111,9 @@ check_mk_local_plugins: {}
 # deprecated list of all local plugins to be installed
 # check_mk_local_plugins: []
 
+# check_mk_local_plugins as templates
+check_mk_local_plugins_template: {}
+
 # plugins to remove
 check_mk_local_plugins_remove: {}
 
