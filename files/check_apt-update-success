@@ -16,7 +16,13 @@ if [ -f /var/lib/apt/periodic/update-success-stamp ]; then
 	fi
 	LASTUPDATEMINTXT="${LASTUPDATEMIN} min${LASTUPDATEH}"
 	STATUS="OK: last successfull apt update was $LASTUPDATEMINTXT ago"
-	if [ $LASTUPDATEMIN -ge $LASTUPDATEMIN_CRIT ]; then
+	# check the output of the last run for warnings and errors
+	# requires APT::Periodic::Verbose "2"; in /etc/apt/apt.conf.d/20periodic
+	WE=$(journalctl -u apt-daily.service -n 100 --no-pager -r | sed '/Starting Daily apt download activities/,$d; /: [WE]: /!d')
+	if [ -n "$WE" ]; then
+		RET=2
+		STATUS="CRITICAL: last successfull apt update was $LASTUPDATEMINTXT ago with errors $WE"
+	elif [ $LASTUPDATEMIN -ge $LASTUPDATEMIN_CRIT ]; then
 		RET=2
 		STATUS="CRITICAL: last successfull apt update was $LASTUPDATEMINTXT ago"
 	elif [ $LASTUPDATEMIN -ge $LASTUPDATEMIN_WARN ]; then
