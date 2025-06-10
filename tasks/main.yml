@@ -2,27 +2,32 @@
 
 - name: convert deprecated format from list to dict for checkmkagent_required_packages
   ansible.builtin.set_fact:
-    checkmkagent_required_packages: "{ 'deprecated' : {{ checkmkagent_required_packages }} }"
+    checkmkagent_required_packages:
+      deprecated: "{{ checkmkagent_required_packages }}"
   when: checkmkagent_required_packages | type_debug == "list"
 
 - name: convert deprecated format from list to dict for check_mk_logwatch_syslog_patterns
   ansible.builtin.set_fact:
-    check_mk_logwatch_syslog_patterns: "{ 'deprecated' : {{ check_mk_logwatch_syslog_patterns }} }"
+    check_mk_logwatch_syslog_patterns:
+      deprecated: "{{ check_mk_logwatch_syslog_patterns }}"
   when: check_mk_logwatch_syslog_patterns | type_debug == "list"
 
 - name: convert deprecated format from list to dict for check_mk_plugins
   ansible.builtin.set_fact:
-    check_mk_plugins: "{ 'deprecated' : {{ check_mk_plugins }} }"
+    check_mk_plugins:
+      deprecated: "{{ check_mk_plugins }}"
   when: check_mk_plugins | type_debug == "list"
 
 - name: convert deprecated format from list to dict for check_mk_local_plugins
   ansible.builtin.set_fact:
-    check_mk_local_plugins: "{ 'deprecated' : {{ check_mk_local_plugins }} }"
+    check_mk_local_plugins:
+      deprecated: "{{ check_mk_local_plugins }}"
   when: check_mk_local_plugins | type_debug == "list"
 
 - name: convert deprecated format from list to dict for check_mk_local_cfg
   ansible.builtin.set_fact:
-    check_mk_local_cfg: "{ 'deprecated' : {{ check_mk_local_cfg }} }"
+    check_mk_local_cfg:
+      deprecated: "{{ check_mk_local_cfg }}"
   when: check_mk_local_cfg | type_debug == "list"
 
 - name: fetch agent page from checkmk server
