@@ -287,6 +287,16 @@
   when: item | length > 0
   with_items: "{{ check_mk_local_cfg.values() | list | flatten }}"
 
+- name: Copy local check_mk cfg templates
+  ansible.builtin.template:
+    src: "{{ item }}"
+    dest: "/etc/check_mk/{{ item | basename }}"
+    owner: root
+    group: root
+    mode: 0400
+  when: item | length > 0
+  with_items: "{{ check_mk_local_cfg_templates.values() | list | flatten }}"
+
 - name: Copy local check_mk checks
   ansible.builtin.copy:
     src: "{{ item }}"

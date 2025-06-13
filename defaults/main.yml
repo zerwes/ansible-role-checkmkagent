@@ -127,6 +127,10 @@ check_mk_local_cfg: {}
 # deprecated list of local cfg files
 # check_mk_local_cfg: []
 
+# dict of local cfg files as templates
+# will be installed into /etc/check_mk/
+check_mk_local_cfg_templates: {}
+
 # method how the agent should be started
 # check_mk_agent_use_xinetd and check_mk_agent_use_systemd are mutualy exclusive
 check_mk_agent_use_xinetd: true
