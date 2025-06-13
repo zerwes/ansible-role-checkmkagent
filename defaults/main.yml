@@ -89,6 +89,7 @@ checkmkagent_required_packages: {}
 # checkmkagent_required_packages: []
 
 # dict of all plugins to be downloaded and installed from main check_mk site
+# will be installed to /usr/lib/check_mk_agent/plugins/
 check_mk_plugins: {}
 # deprecated list of all plugins to be downloaded and installed from main check_mk site
 # check_mk_plugins: []
@@ -97,6 +98,8 @@ check_mk_plugins: {}
 check_mk_plugins_remove: {}
 
 # dict of all local plugins to be installed
+# will be installed to /usr/lib/check_mk_agent/local/
+#
 # in the role we have included some plugins
 # check_mk_local_plugins:
 #   all:
@@ -112,15 +115,21 @@ check_mk_local_plugins: {}
 # check_mk_local_plugins: []
 
 # check_mk_local_plugins as templates
+# will be installed to /usr/lib/check_mk_agent/local/
 check_mk_local_plugins_template: {}
 
 # plugins to remove
 check_mk_local_plugins_remove: {}
 
 # dict of local cfg files
+# will be installed into /etc/check_mk/
 check_mk_local_cfg: {}
 # deprecated list of local cfg files
 # check_mk_local_cfg: []
+
+# dict of local cfg files as templates
+# will be installed into /etc/check_mk/
+check_mk_local_cfg_templates: {}
 
 # method how the agent should be started
 # check_mk_agent_use_xinetd and check_mk_agent_use_systemd are mutualy exclusive
