@@ -69,7 +69,7 @@
     url: "{{ checkmk_proto }}://{{ checkmk_hostname }}/{{ checkmk_path }}/{{ checkmk_agent_deb }}"
     dest: "{{ _local_tmp }}/{{ checkmk_agent_deb }}"
     force: false
-    mode: 0600
+    mode: "0600"
   when: download_checkmk_agent_deb | default(true)
   tags:
     - molecule-notest
@@ -79,7 +79,7 @@
     src: "{{ _local_tmp }}/{{ checkmk_agent_deb }}"
     dest: /var/tmp/{{ checkmk_agent_deb }}
     force: false
-    mode: 0600
+    mode: "0600"
   when: download_checkmk_agent_deb | default(true)
   tags:
     - molecule-notest
@@ -151,7 +151,7 @@
   ansible.builtin.template:
     src: check_mk.xinetd.j2
     dest: /etc/xinetd.d/check_mk
-    mode: 0644
+    mode: "0644"
   when: check_mk_agent_use_xinetd
   register: xinetdcfgchanged
 
@@ -214,7 +214,7 @@
     url: "{{ checkmk_proto }}://{{ checkmk_hostname }}/{{ checkmk_path }}/plugins/{{ item }}"
     dest: "{{ _local_tmp }}/{{ item }}"
     force: false
-    mode: 0600
+    mode: "0600"
   when: item | length > 0
   with_items:
     - "{{ check_mk_plugins.values() | list | flatten }}"
@@ -229,7 +229,7 @@
     dest: "/usr/lib/check_mk_agent/plugins/{{ item }}"
     owner: root
     group: root
-    mode: 0755
+    mode: "0755"
   with_items: "{{ check_mk_logwatch_plugin }}"
   diff: no
   when: check_mk_logwatch | bool
@@ -259,7 +259,7 @@
     dest: /etc/check_mk/logwatch.cfg
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
   when: check_mk_logwatch | bool
 
 - name: Upload check plugins
@@ -268,7 +268,7 @@
     dest: "/usr/lib/check_mk_agent/plugins/{{ item }}"
     owner: root
     group: root
-    mode: 0755
+    mode: "0755"
   with_items: "{{ check_mk_plugins.values() | list | flatten }}"
 
 - name: Remove check plugins
@@ -283,7 +283,7 @@
     dest: "/etc/check_mk/{{ item | basename }}"
     owner: root
     group: root
-    mode: 0400
+    mode: "0400"
   when: item | length > 0
   with_items: "{{ check_mk_local_cfg.values() | list | flatten }}"
 
@@ -293,7 +293,7 @@
     dest: "/etc/check_mk/{{ item | basename }}"
     owner: root
     group: root
-    mode: 0400
+    mode: "0400"
   when: item | length > 0
   with_items: "{{ check_mk_local_cfg_templates.values() | list | flatten }}"
 
@@ -303,7 +303,7 @@
     dest: "/usr/lib/check_mk_agent/local/{{ item | basename }}"
     owner: root
     group: root
-    mode: 0755
+    mode: "0755"
   when: item | length > 0
   with_items: "{{ check_mk_local_plugins.values() | list | flatten }}"
 
@@ -313,7 +313,7 @@
     dest: "/usr/lib/check_mk_agent/local/{{ item | basename }}"
     owner: root
     group: root
-    mode: 0755
+    mode: "0755"
   when: item | length > 0
   with_items: "{{ check_mk_local_plugins_template.values() | list | flatten }}"
 
