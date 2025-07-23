@@ -27,8 +27,11 @@ provisioner:
     host_vars:
       instance:
         checkmk_agent_version: ${MOLECULE_CHECKMK_VERSION:-2.2.0p14}
-        checkmk_hostname: 127.0.0.1
-        download_checkmk_agent_deb: false
+        checkmk_hostname: ${MOLECULE_CHECKMK_HOSTNAME:-127.0.0.1}
+        checkmk_site: ${MOLECULE_CHECKMK_SITE:-SITENAME}
+        checkmk_proto: ${MOLECULE_CHECKMK_PROTO:-http}
+        download_checkmk_agent_deb: ${MOLECULE_DOWNLOAD_CHECKMK_AGENT_DEB:-false}
+        molecule_install_agent_from_server: ${MOLECULE_MOLECULE_INSTALL_AGENT_FROM_SERVER:-true}
         check_mk_logwatch_plugin:
         check_mk_logwatch: false
 verifier:
