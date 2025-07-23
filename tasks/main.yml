@@ -103,7 +103,7 @@
     name: check-mk-agent-logwatch
     state: absent
 
-- name: fail if both variants enabled
+- name: fail if both variants are configured with the same value
   ansible.builtin.fail:
     msg: "both variants set to {{ check_mk_agent_use_xinetd }}"
   when: check_mk_agent_use_xinetd == check_mk_agent_use_systemd
