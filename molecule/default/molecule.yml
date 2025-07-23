@@ -31,5 +31,6 @@ provisioner:
         download_checkmk_agent_deb: false
         check_mk_logwatch_plugin:
         check_mk_logwatch: false
+        checkmk_agent_deb: "check-mk-agent_{{ checkmk_agent_version }}-1_all.deb"
 verifier:
   name: ansible
