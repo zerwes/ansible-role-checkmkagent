@@ -32,5 +32,8 @@ provisioner:
         check_mk_logwatch_plugin:
         check_mk_logwatch: false
         checkmk_agent_deb: "check-mk-agent_{{ checkmk_agent_version }}-1_all.deb"
+        check_mk_agent_use_systemd: ${MOLECULE_CHECK_MK_AGENT_USE_SYSTEMD:-false}
+        check_mk_agent_use_xinetd: "{{ check_mk_agent_use_systemd | ternary(false, true) | bool }}"
+        checkmk_agent_register: ${MOLECULE_CHECKMK_AGENT_REGISTER:-false}
 verifier:
   name: ansible
