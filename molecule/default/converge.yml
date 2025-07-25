@@ -7,9 +7,6 @@
     - name: print ansible version
       ansible.builtin.debug:
         msg: "{{ ansible_version.full }}"
-    - name: "include role vars ..."
-      include_vars:
-        file: ../../defaults/main.yml
     - name: "fetch server deb ..."
       get_url:
         url: "https://download.checkmk.com/checkmk/{{ checkmk_agent_version }}/check-mk-raw-{{ checkmk_agent_version }}_0.bullseye_amd64.deb"

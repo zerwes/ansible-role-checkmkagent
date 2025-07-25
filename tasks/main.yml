@@ -103,7 +103,7 @@
     name: check-mk-agent-logwatch
     state: absent
 
-- name: fail if both variants enabled
+- name: fail if both variants are configured with the same value
   ansible.builtin.fail:
     msg: "both variants set to {{ check_mk_agent_use_xinetd }}"
   when: check_mk_agent_use_xinetd == check_mk_agent_use_systemd
@@ -323,5 +323,17 @@
     state: absent
   when: item | length > 0
   with_items: "{{ check_mk_local_plugins_remove.values() | list | flatten }}"
+
+- name: Register host on checkmk server
+  tags:
+    - always
+  ansible.builtin.include_tasks:
+    file: register.yml
+    apply:
+      tags:
+        - checkmk_agent_register
+  when:
+    - check_mk_agent_use_systemd
+    - checkmk_agent_register or checkmk_agent_register_proxy
 
 # vim: tabstop=2 expandtab shiftwidth=2 softtabstop=2 smartindent nu ft=yaml

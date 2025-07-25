@@ -1,0 +1,114 @@
+---
+
+- name: register cmk-agent-ctl status  # noqa no-changed-when
+  ansible.builtin.command: cmk-agent-ctl status --json --no-query-remote
+  changed_when: false
+  register: _cmkagentctl_status
+
+- name: debug _cmkagentctl_status
+  ansible.builtin.debug:
+    var: _cmkagentctl_status
+    verbosity: 1
+
+- name: set _cmkagentctl_status_var
+  ansible.builtin.set_fact:
+    _cmkagentctl_status_var: "{{ _cmkagentctl_status.stdout | from_json }}"
+
+- name: debug _cmkagentctl_status_var
+  ansible.builtin.debug:
+    var: _cmkagentctl_status_var
+    verbosity: 1
+
+- name: query host on checkmk site
+  ansible.builtin.uri:
+    url: "{{ checkmk_api_url }}/objects/host_config/{{ checkmk_agent_register_hostname }}?effective_attributes=false"
+    method: "GET"
+    headers: "{'accept': 'application/json', 'Authorization': 'Bearer {{ checkmk_agent_register_user }} {{ checkmk_agent_register_password }}'}"
+    return_content: true
+  delegate_to: '{{ checkmk_agent_register_proxy_host if checkmk_agent_register_proxy else omit }}'
+  register: _checkmk_get_host
+  check_mode: false
+  changed_when: false
+  failed_when: (not "json" in _checkmk_get_host) or (_checkmk_get_host.status == 401)
+
+- name: debug _checkmk_get_host
+  ansible.builtin.debug:
+    var: _checkmk_get_host
+    verbosity: 1
+
+- name: create host on checkmk site
+  ansible.builtin.uri:
+    url: "{{ checkmk_api_url }}/domain-types/host_config/collections/all?bake_agent=false"
+    method: "POST"
+    headers: "{'accept': 'application/json', 'Content-Type': 'application/json','Authorization': 'Bearer {{ checkmk_agent_register_user }} {{ checkmk_agent_register_password }}'}"
+    body_format: json
+    body: '{"host_name": "{{ checkmk_agent_register_hostname }}", "folder": "{{ checkmk_agent_register_folder }}", "attributes": {"ipaddress": "{{ checkmk_agent_register_ipaddress }}"}}'
+    return_content: true
+  delegate_to: '{{ checkmk_agent_register_proxy_host if checkmk_agent_register_proxy else omit }}'
+  register: _checkmk_create_host
+  failed_when: (not "json" in _checkmk_create_host) or (not _checkmk_create_host.status == 200)
+  when: _checkmk_get_host.status == 404
+
+- name: debug _checkmk_create_host
+  ansible.builtin.debug:
+    var: _checkmk_create_host
+    verbosity: 1
+
+- name: run cmk-agent-ctl register  # noqa no-changed-when
+  ansible.builtin.command:
+    argv:
+      - cmk-agent-ctl
+      - register
+      - --hostname
+      - "{{ checkmk_agent_register_hostname }}"
+      - --trust-cert
+      - --server
+      - "{{ checkmk_hostname | default(checkmk_ip) }}:{{ checkmk_agent_register_port | default(8000) }}"
+      - --site
+      - "{{ checkmk_site }}"
+      - --user
+      - "{{ checkmk_agent_register_user }}" 
+      - --password
+      - "{{ checkmk_agent_register_password }}"
+  when:
+    - not checkmk_agent_register_proxy
+    - (_cmkagentctl_status_var.connections | default([]) | length) == 0
+
+- name: run proxy-register ...
+  when:
+    - checkmk_agent_register_proxy
+    - (_cmkagentctl_status_var.connections | default([]) | length) == 0
+  block:
+    - name: run cmk-agent-ctl proxy-register  # noqa no-changed-when
+      delegate_to: '{{ checkmk_agent_register_proxy_host }}'
+      ansible.builtin.command:
+        argv:
+          - cmk-agent-ctl
+          - proxy-register
+          - --hostname
+          - "{{ checkmk_agent_register_hostname }}"
+          - --trust-cert
+          - --server
+          - "{{ checkmk_hostname | default(checkmk_ip) }}:{{ checkmk_agent_register_port | default(8000) }}"
+          - --site
+          - "{{ checkmk_site }}"
+          - --user
+          - "{{ checkmk_agent_register_user }}" 
+          - --password
+          - "{{ checkmk_agent_register_password }}"
+      register: _cmkagentctl_register_proxy
+
+    - name: create register file on target host
+      ansible.builtin.copy:
+        dest: /var/tmp/.cmkagentctl_register_proxy
+        content: "{{ _cmkagentctl_register_proxy.stdout }}"
+        mode: "0600"
+        owner: cmk-agent
+
+    - name: run cmk-agent-ctl import on the target host  # noqa no-changed-when
+      ansible.builtin.command: cmk-agent-ctl import /var/tmp/.cmkagentctl_register_proxy
+
+    - name: clean up ...
+      ansible.builtin.file:
+        path: /var/tmp/.cmkagentctl_register_proxy
+        state: absent

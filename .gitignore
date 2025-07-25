@@ -1,2 +1,3 @@
 *.retry
 *.swp
+molecule/default/roles/
