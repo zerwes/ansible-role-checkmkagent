@@ -31,11 +31,6 @@
 # the server must be reachable from the control machine, not from the target host
 # checkmk_hostname:
 
-# FIXME remove
-# ansible inventory_hostname for checkmk server
-# if defined, we will use this for delegate_to for actions on the checkmk server
-#checkmk_server_inventory_hostname: "{{ checkmk_hostname }}"
-
 # protocoll used by the server (http|https)
 checkmk_proto: http
 
@@ -92,6 +87,12 @@ checkmk_agent_register_password:
 
 # hostname to use for registration
 checkmk_agent_register_hostname: "{{ ansible_hostname | default(inventory_hostname) }}"
+
+# create new hosts in this folder
+checkmk_agent_register_folder: "/"
+
+# set hosts IP address during register
+checkmk_agent_register_ipaddress: "{{ ansible_default_ipv4.address }}"
 
 # use logwatch
 check_mk_logwatch: true
