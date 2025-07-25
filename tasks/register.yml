@@ -2,6 +2,7 @@
 
 - name: register cmk-agent-ctl status  # noqa no-changed-when
   ansible.builtin.command: cmk-agent-ctl status --json --no-query-remote
+  changed_when: false
   register: _cmkagentctl_status
 
 - name: debug _cmkagentctl_status
