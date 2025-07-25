@@ -69,4 +69,45 @@
       - "{{ checkmk_agent_register_user }}" 
       - --password
       - "{{ checkmk_agent_register_password }}"
-  when: (_cmkagentctl_status_var.connections | default([]) | length) == 0
+  when:
+    - not checkmk_agent_register_proxy
+    - (_cmkagentctl_status_var.connections | default([]) | length) == 0
+
+- name: run proxy-register ...
+  when:
+    - checkmk_agent_register_proxy
+    - (_cmkagentctl_status_var.connections | default([]) | length) == 0
+  block:
+    - name: run cmk-agent-ctl proxy-register  # noqa no-changed-when
+      delegate_to: '{{ checkmk_agent_register_proxy_host }}'
+      ansible.builtin.command:
+        argv:
+          - cmk-agent-ctl
+          - proxy-register
+          - --hostname
+          - "{{ checkmk_agent_register_hostname }}"
+          - --trust-cert
+          - --server
+          - "{{ checkmk_hostname | default(checkmk_ip) }}:{{ checkmk_agent_register_port | default(8000) }}"
+          - --site
+          - "{{ checkmk_site }}"
+          - --user
+          - "{{ checkmk_agent_register_user }}" 
+          - --password
+          - "{{ checkmk_agent_register_password }}"
+      register: _cmkagentctl_register_proxy
+
+    - name: create register file on target host
+      ansible.builtin.copy:
+        dest: /var/tmp/.cmkagentctl_register_proxy
+        content: "{{ _cmkagentctl_register_proxy.stdout }}"
+        mode: "0600"
+        owner: cmk-agent
+
+    - name: run cmk-agent-ctl import on the target host  # noqa no-changed-when
+      ansible.builtin.command: cmk-agent-ctl import /var/tmp/.cmkagentctl_register_proxy
+
+    - name: clean up ...
+      ansible.builtin.file:
+        path: /var/tmp/.cmkagentctl_register_proxy
+        state: absent
