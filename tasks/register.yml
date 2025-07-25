@@ -1,0 +1,44 @@
+---
+
+- name: register cmk-agent-ctl status
+  ansible.builtin.command: cmk-agent-ctl status --json --no-query-remote
+  register: _cmkagentctl_status
+
+- name: debug _cmkagentctl_status
+  ansible.builtin.debug:
+    var: _cmkagentctl_status
+    verbosity: 1
+
+- name: query host on checkmk site
+  ansible.builtin.uri:
+    url: "{{ checkmk_api_url }}/objects/host_config/{{ checkmk_agent_register_hostname }}?effective_attributes=false"
+    method: "GET"
+    headers: "{'accept': 'application/json', 'Authorization': 'Bearer {{ checkmk_agent_register_user }} {{ checkmk_agent_register_password }}'}"
+    return_content: true
+  delegate_to: '{{ checkmk_agent_register_proxy_host if checkmk_agent_register_proxy else omit }}'
+  register: _checkmk_get_host
+  check_mode: false
+  changed_when: false
+  failed_when: (not "json" in _checkmk_get_host) or (_checkmk_get_host.status == 401)
+
+- name: debug _checkmk_get_host
+  ansible.builtin.debug:
+    var: _checkmk_get_host
+    verbosity: 1
+
+- name: run cmk-agent-ctl register
+  ansible.builtin.command:
+    argv:
+      - cmk-agent-ctl
+      - register
+      - --hostname
+      - "{{ checkmk_agent_register_hostname }}"
+      - --trust-cert
+      - --server
+      - "{{ checkmk_hostname | default(checkmk_ip) }}:{{ checkmk_agent_register_port | default(8000) }}"
+      - --site
+      - "{{ checkmk_site }}"
+      - --user
+      - "{{ checkmk_agent_register_user }}" 
+      - --password
+      - "{{ checkmk_agent_register_password }}"
