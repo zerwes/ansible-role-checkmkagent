@@ -1,6 +1,6 @@
 ---
 
-- name: register cmk-agent-ctl status
+- name: register cmk-agent-ctl status  # noqa no-changed-when
   ansible.builtin.command: cmk-agent-ctl status --json --no-query-remote
   register: _cmkagentctl_status
 
@@ -41,7 +41,7 @@
     method: "POST"
     headers: "{'accept': 'application/json', 'Content-Type': 'application/json','Authorization': 'Bearer {{ checkmk_agent_register_user }} {{ checkmk_agent_register_password }}'}"
     body_format: json
-    body: '{"host_name": "{{ checkmk_agent_register_hostname }}", "folder": "{{ checkmk_agent_register_folder}}", "attributes": {"ipaddress": "{{ checkmk_agent_register_ipaddress }}"}}'
+    body: '{"host_name": "{{ checkmk_agent_register_hostname }}", "folder": "{{ checkmk_agent_register_folder }}", "attributes": {"ipaddress": "{{ checkmk_agent_register_ipaddress }}"}}'
     return_content: true
   delegate_to: '{{ checkmk_agent_register_proxy_host if checkmk_agent_register_proxy else omit }}'
   register: _checkmk_create_host
@@ -53,7 +53,7 @@
     var: _checkmk_create_host
     verbosity: 1
 
-- name: run cmk-agent-ctl register
+- name: run cmk-agent-ctl register  # noqa no-changed-when
   ansible.builtin.command:
     argv:
       - cmk-agent-ctl
