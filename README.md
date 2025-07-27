@@ -6,6 +6,7 @@
 # ansible-role-checkmkagent
 
 [ansible](https://www.ansible.com) role to install/configure [checkmk agent](https://checkmk.com/) on debian
+with optional creation and registration of the agent host on the checkmk server.
 
 ## role variables
 
