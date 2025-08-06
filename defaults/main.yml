@@ -155,6 +155,16 @@ check_mk_local_plugins: {}
 
 # check_mk_local_plugins as templates
 # will be installed to /usr/lib/check_mk_agent/local/
+# the file listed here can contain path elements, as the will be removed for the target
+# the template listed here should contain just the filename, we will look for a file with that name and the '.j2' extension
+# example:
+# check_mk_local_plugins_template:
+#   all:
+#     - check_this
+#     - check_that
+#   cloud:
+#     - cloud/check_cloud
+# will look for templates/check_this.j2, templates/check_that.j2 and templates/cloud/check_cloud.j2
 check_mk_local_plugins_template: {}
 
 # plugins to remove
