@@ -73,6 +73,10 @@ checkmk_agent_register_port: 8000
 # the monitoring server
 checkmk_agent_register_proxy: false
 
+# by default register tasks will have set `no_log` to true
+# for debug you can set
+# checkmk_agent_register_nolog: false
+
 # set the proxy host for the
 # cmk-agent-ctl proxy-register command
 # the proxy host must have the agent installed and needs access to
