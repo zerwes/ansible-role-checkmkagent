@@ -73,6 +73,16 @@ checkmk_agent_register_port: 8000
 # the monitoring server
 checkmk_agent_register_proxy: false
 
+# create host on checkmk site if it does not exists
+# if not set, register will be only performed for existing hosts
+# this requires more priviledges than agent_registration
+checkmk_agent_register_create_host: false
+
+# fail if checkmk_agent_register is set to true
+# but checkmk_agent_register_create_host to false
+# and the host does not exists
+checkmk_agent_register_fail_if_host_is_missing: true
+
 # by default register tasks will have set `no_log` to true
 # for debug you can set
 # checkmk_agent_register_nolog: false
@@ -84,6 +94,7 @@ checkmk_agent_register_proxy: false
 checkmk_agent_register_proxy_host: "{{ checkmk_hostname }}"
 
 # API user to use for registration
+# requires at least agent_registration role
 checkmk_agent_register_user:
 
 # Password for API user
@@ -93,6 +104,8 @@ checkmk_agent_register_password:
 checkmk_agent_register_hostname: "{{ ansible_fqdn | default(ansible_hostname) | default(inventory_hostname) }}"
 
 # create new hosts in this folder
+# example:
+# checkmk_agent_register_folder: "/{{ checkmk_site }}"
 checkmk_agent_register_folder: "/"
 
 # set hosts IP address during register

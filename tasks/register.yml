@@ -38,24 +38,27 @@
     verbosity: 1
 
 - name: create host on checkmk site
-  ansible.builtin.uri:
-    url: "{{ checkmk_api_url }}/domain-types/host_config/collections/all?bake_agent=false"
-    method: "POST"
-    headers: "{'accept': 'application/json', 'Content-Type': 'application/json','Authorization': 'Bearer {{ checkmk_agent_register_user }} {{ checkmk_agent_register_password }}'}"
-    body_format: json
-    body: '{"host_name": "{{ checkmk_agent_register_hostname }}", "folder": "{{ checkmk_agent_register_folder }}", "attributes": {"ipaddress": "{{ checkmk_agent_register_ipaddress }}"}}'
-    return_content: true
-  delegate_to: '{{ checkmk_agent_register_proxy_host if checkmk_agent_register_proxy else omit }}'
-  register: _checkmk_create_host
-  failed_when: (not "json" in _checkmk_create_host) or (not _checkmk_create_host.status == 200)
-  no_log: "{{ checkmk_agent_register_nolog | default(true) | bool }}"
-  when: _checkmk_get_host.status == 404
+  when:
+    - checkmk_agent_register_create_host | bool
+    - _checkmk_get_host.status == 404
+  block:
+    - name: create host on checkmk site via api call
+      ansible.builtin.uri:
+        url: "{{ checkmk_api_url }}/domain-types/host_config/collections/all?bake_agent=false"
+        method: "POST"
+        headers: "{'accept': 'application/json', 'Content-Type': 'application/json','Authorization': 'Bearer {{ checkmk_agent_register_user }} {{ checkmk_agent_register_password }}'}"
+        body_format: json
+        body: '{"host_name": "{{ checkmk_agent_register_hostname }}", "folder": "{{ checkmk_agent_register_folder }}", "attributes": {"ipaddress": "{{ checkmk_agent_register_ipaddress }}"}}'
+        return_content: true
+      delegate_to: '{{ checkmk_agent_register_proxy_host if checkmk_agent_register_proxy else omit }}'
+      register: _checkmk_create_host
+      failed_when: (not "json" in _checkmk_create_host) or (not _checkmk_create_host.status == 200)
+      no_log: "{{ checkmk_agent_register_nolog | default(true) | bool }}"
 
-- name: debug _checkmk_create_host
-  ansible.builtin.debug:
-    var: _checkmk_create_host
-    verbosity: 1
-  when: _checkmk_get_host.status == 404
+    - name: debug _checkmk_create_host
+      ansible.builtin.debug:
+        var: _checkmk_create_host
+        verbosity: 1
 
 - name: run cmk-agent-ctl register  # noqa no-changed-when
   ansible.builtin.command:
@@ -75,13 +78,15 @@
       - "{{ checkmk_agent_register_password }}"
   no_log: "{{ checkmk_agent_register_nolog | default(true) | bool }}"
   when:
-    - not checkmk_agent_register_proxy
+    - not checkmk_agent_register_proxy | bool
     - (_cmkagentctl_status_var.connections | default([]) | length) == 0
+    - (checkmk_agent_register_fail_if_host_is_missing | bool) or _checkmk_get_host.status != 404 or ((checkmk_agent_register_create_host | bool) and _checkmk_create_host.status == 200)
 
 - name: run proxy-register ...
   when:
-    - checkmk_agent_register_proxy
+    - not checkmk_agent_register_proxy | bool
     - (_cmkagentctl_status_var.connections | default([]) | length) == 0
+    - (checkmk_agent_register_fail_if_host_is_missing | bool) or _checkmk_get_host.status != 404 or ((checkmk_agent_register_create_host | bool) and _checkmk_create_host.status == 200)
   block:
     - name: run cmk-agent-ctl proxy-register  # noqa no-changed-when
       delegate_to: '{{ checkmk_agent_register_proxy_host }}'
