@@ -325,15 +325,19 @@
   with_items: "{{ check_mk_local_plugins_remove.values() | list | flatten }}"
 
 - name: Register host on checkmk server
-  tags:
-    - always
-  ansible.builtin.include_tasks:
-    file: register.yml
-    apply:
+  throttle: 1
+  # we use a block statement as 'throttle' is not a valid attribute for a TaskInclude
+  block:
+    - name: Register host on checkmk server
       tags:
-        - checkmk_agent_register
-  when:
-    - check_mk_agent_use_systemd
-    - checkmk_agent_register or checkmk_agent_register_proxy
+        - always
+      ansible.builtin.include_tasks:
+        file: register.yml
+        apply:
+          tags:
+            - checkmk_agent_register
+      when:
+        - check_mk_agent_use_systemd
+        - checkmk_agent_register or checkmk_agent_register_proxy
 
 # vim: tabstop=2 expandtab shiftwidth=2 softtabstop=2 smartindent nu ft=yaml
