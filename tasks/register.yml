@@ -20,6 +20,7 @@
     verbosity: 1
 
 - name: query host on checkmk site
+  throttle: 1
   ansible.builtin.uri:
     url: "{{ checkmk_api_url }}/objects/host_config/{{ checkmk_agent_register_hostname }}?effective_attributes=false"
     method: "GET"
@@ -41,6 +42,7 @@
   when:
     - checkmk_agent_register_create_host | bool
     - _checkmk_get_host.status == 404
+  throttle: 1
   block:
     - name: create host on checkmk site via api call
       ansible.builtin.uri:
@@ -61,6 +63,7 @@
         verbosity: 1
 
 - name: run cmk-agent-ctl register  # noqa no-changed-when
+  throttle: 1
   ansible.builtin.command:
     argv:
       - cmk-agent-ctl
@@ -83,6 +86,7 @@
     - (checkmk_agent_register_fail_if_host_is_missing | bool) or _checkmk_get_host.status != 404 or ((checkmk_agent_register_create_host | bool) and _checkmk_create_host.status == 200)
 
 - name: run proxy-register ...
+  throttle: 1
   when:
     - not checkmk_agent_register | bool
     - checkmk_agent_register_proxy | bool
@@ -90,6 +94,7 @@
     - (checkmk_agent_register_fail_if_host_is_missing | bool) or _checkmk_get_host.status != 404 or ((checkmk_agent_register_create_host | bool) and _checkmk_create_host.status == 200)
   block:
     - name: run cmk-agent-ctl proxy-register  # noqa no-changed-when
+      throttle: 1
       delegate_to: '{{ checkmk_agent_register_proxy_host }}'
       ansible.builtin.command:
         argv:
@@ -108,6 +113,11 @@
           - "{{ checkmk_agent_register_password }}"
       register: _cmkagentctl_register_proxy
       no_log: "{{ checkmk_agent_register_nolog | default(true) | bool }}"
+
+    - name: debug _cmkagentctl_register_proxy.stdout
+      ansible.builtin.debug:
+        var: _cmkagentctl_register_proxy.stdout
+        verbosity: 1
 
     - name: create register file on target host
       ansible.builtin.copy:
