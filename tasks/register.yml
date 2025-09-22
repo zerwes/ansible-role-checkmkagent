@@ -84,7 +84,8 @@
 
 - name: run proxy-register ...
   when:
-    - not checkmk_agent_register_proxy | bool
+    - not checkmk_agent_register | bool
+    - checkmk_agent_register_proxy | bool
     - (_cmkagentctl_status_var.connections | default([]) | length) == 0
     - (checkmk_agent_register_fail_if_host_is_missing | bool) or _checkmk_get_host.status != 404 or ((checkmk_agent_register_create_host | bool) and _checkmk_create_host.status == 200)
   block:
