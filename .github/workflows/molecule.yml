@@ -27,6 +27,9 @@ jobs:
           - 2.2.0p43
           - 2.1.0p49
           - 2.0.0p39
+        use_systemd:
+          - false
+          - true
         include:
           - ansible: latest
             pip3deps: 'ansible molecule "molecule-plugins[docker]" yamllint ansible-lint "requests<2.29" "urllib3<2" "certifi<2025.6.15"'
@@ -52,3 +55,4 @@ jobs:
           ANSIBLE_FORCE_COLOR: '1'
           MOLECULE_DISTRO: ${{ matrix.distro }}
           MOLECULE_CHECKMK_VERSION: ${{ matrix.checkmkversion }}
+          MOLECULE_CHECK_MK_AGENT_USE_SYSTEMD: ${{ matrix.use_systemd }}
