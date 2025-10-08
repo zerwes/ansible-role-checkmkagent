@@ -7,6 +7,12 @@
     - name: print ansible version
       ansible.builtin.debug:
         msg: "{{ ansible_version.full }}"
+    - name: print check_mk_agent_use_systemd
+      ansible.builtin.debug:
+        msg: "{{ check_mk_agent_use_systemd | bool }}"
+    - name: print checkmk_agent_version
+      ansible.builtin.debug:
+        var: checkmk_agent_version
     - name: "fetch server deb ..."
       get_url:
         url: "https://download.checkmk.com/checkmk/{{ checkmk_agent_version }}/check-mk-raw-{{ checkmk_agent_version }}_0.bullseye_amd64.deb"
