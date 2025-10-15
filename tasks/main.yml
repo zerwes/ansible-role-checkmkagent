@@ -183,10 +183,11 @@
     var: _xinetd_service_state
     verbosity: 1
 
-- name: ensure xinetd service state is {{ _xinetd_service_state | default('started') }}
+- name: ensure xinetd service state is {{ _xinetd_service_state | default('started') }}  # noqa ignore-errors
   ansible.builtin.service:
     name: xinetd
     state: "{{ _xinetd_service_state }}"
+  ignore_errors: "{{ check_mk_agent_use_systemd }}"
   when:
     - not purge_xinetd | default(false)
     - _xinetd_service_state is defined
