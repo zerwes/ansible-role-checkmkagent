@@ -160,7 +160,7 @@
     path: /etc/xinetd.d/check_mk
     state: absent
   when: check_mk_agent_use_systemd
-  register: xinetdcfgchanged
+  register: _xinetdcfgremoved
 
 - name: register xinetd desired service state
   ansible.builtin.set_fact:
