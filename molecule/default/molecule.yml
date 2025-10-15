@@ -23,6 +23,8 @@ platforms:
 
 provisioner:
   name: ansible
+  env:
+    ANSIBLE_VERBOSITY: ${ANSIBLE_VERBOSITY:-1}
   inventory:
     host_vars:
       instance:
