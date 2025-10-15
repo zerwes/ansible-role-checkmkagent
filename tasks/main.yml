@@ -188,7 +188,7 @@
     name: xinetd
     state: "{{ _xinetd_service_state }}"
   when:
-    - not purge_xinetd | default(False)
+    - not purge_xinetd | default(false)
     - _xinetd_service_state is defined
 
 - name: purge xinetd
@@ -198,7 +198,7 @@
     purge: true
   when:
     - check_mk_agent_use_systemd
-    - purge_xinetd | default(False)
+    - purge_xinetd | default(false)
 
 - name: start cmk-agent-ctl-daemon
   ansible.builtin.systemd:
