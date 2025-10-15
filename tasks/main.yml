@@ -186,9 +186,10 @@
 - name: ensure xinetd service state is {{ _xinetd_service_state | default('started') }}
   ansible.builtin.service:
     name: xinetd
-    state: "{{ _xinetd_service_state | default('started') }}"
+    state: "{{ _xinetd_service_state }}"
   when:
     - not purge_xinetd | default(False)
+    - _xinetd_service_state is defined
 
 - name: purge xinetd
   ansible.builtin.apt:
