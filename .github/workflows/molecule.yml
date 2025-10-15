@@ -22,9 +22,9 @@ jobs:
           - debian11
           - debian12
         checkmkversion:
-          - 2.4.0p4
-          - 2.3.0p34
-          - 2.2.0p43
+          - 2.4.0p13
+          - 2.3.0p38
+          - 2.2.0p46
           - 2.1.0p49
           - 2.0.0p39
         use_systemd:
