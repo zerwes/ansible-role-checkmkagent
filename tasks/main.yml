@@ -172,6 +172,10 @@
   ansible.builtin.debug:
     var: _xinetdcfgchanged
 
+- name: debug _xinetdcfgremoved
+  ansible.builtin.debug:
+    var: _xinetdcfgremoved
+
 - name: debug _xinetd_service_state
   ansible.builtin.debug:
     var: _xinetd_service_state
