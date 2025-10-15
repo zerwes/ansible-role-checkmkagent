@@ -166,7 +166,7 @@
   ansible.builtin.set_fact:
     _xinetd_service_state: restarted
   when:
-    - check_mk_agent_use_systemd or (check_mk_agent_use_xinetd and _xinetdcfgchanged.changed | default(false))
+    - (check_mk_agent_use_systemd and _xinetdcfgremoved.changed | default(false)) or (check_mk_agent_use_xinetd and _xinetdcfgchanged.changed | default(false))
 
 - name: debug _xinetdcfgchanged
   ansible.builtin.debug:
