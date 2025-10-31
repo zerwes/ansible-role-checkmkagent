@@ -80,6 +80,7 @@
     dest: /var/tmp/{{ checkmk_agent_deb }}
     force: false
     mode: "0600"
+  diff: false
   when: download_checkmk_agent_deb | default(true)
   tags:
     - molecule-notest
