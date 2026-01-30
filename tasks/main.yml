@@ -342,6 +342,11 @@
   when: item | length > 0
   with_items: "{{ check_mk_local_plugins_remove.values() | list | flatten }}"
 
+- name: debug checkmk_agent_register related vars
+  ansible.builtin.debug:
+    msg: "checkmk_agent_register: {{ checkmk_agent_register }} + checkmk_agent_register_proxy: {{ checkmk_agent_register_proxy }}"
+    verbosity: 1
+
 - name: Register host on checkmk server
   throttle: 1
   # we use a block statement as 'throttle' is not a valid attribute for a TaskInclude
