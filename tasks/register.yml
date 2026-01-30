@@ -19,6 +19,11 @@
     var: _cmkagentctl_status_var
     verbosity: 1
 
+- name: debug checkmk_agent_register_proxy settings
+  ansible.builtin.debug:
+    msg: "checkmk_agent_register_proxy: {{ checkmk_agent_register_proxy }} + checkmk_agent_register_proxy_host: {{ checkmk_agent_register_proxy_host }}"
+    verbosity: 1
+
 - name: query host on checkmk site
   throttle: 1
   ansible.builtin.uri:
