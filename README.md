@@ -25,7 +25,8 @@ In the role we have included some (partialy debian specific) check plugins (`che
   * `check_keepalived` : check the status of keepalive (global an per vrrp instance)
   * `check_samba_repl`: check samba DC replication status
   * `check_fail2ban` : check the status of fail2ban jails (using `fail2ban-client`)
-  * `check_zammad_health`: check the [zammad health](https://admin-docs.zammad.org/en/latest/system/monitoring.html) (requires `python3-requests`)
+  * `check_zammad_health` : check the [zammad health](https://admin-docs.zammad.org/en/latest/system/monitoring.html) (requires `python3-requests`)
+  * `check_lsbrelease` : simple and informational lsb_release check
 
 ## example configuration
 
