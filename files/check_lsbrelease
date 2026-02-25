@@ -1,0 +1,15 @@
+#!/bin/bash
+
+STATUS="OK"
+declare -i RET=0
+
+declare LSB=$(lsb_release -icrs 2>&1)
+
+if [ $? -gt 0 ]; then
+        STATUS="WARNING"
+        RET=1
+fi
+
+echo "$RET LSBRELEASE e=$RET;;;0"  $STATUS - $LSB
+exit $RET
+
