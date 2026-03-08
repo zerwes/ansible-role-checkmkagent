@@ -138,6 +138,7 @@
     masked: true
     daemon_reload: true
   when:
+    - not ansible_check_mode
     - check_mk_agent_use_xinetd
     - check_mk_agent_ctl_daemon.status.ActiveState in ['active', 'failed']
 
@@ -210,6 +211,7 @@
     masked: false
     daemon_reload: true
   when:
+    - not ansible_check_mode
     - check_mk_agent_use_systemd
     - check_mk_agent_ctl_daemon.status.ActiveState == 'inactive'
     - checkmk_agent_version is version_compare('2.1.0', '>=')
@@ -222,6 +224,7 @@
     masked: false
     daemon_reload: true
   when:
+    - not ansible_check_mode
     - check_mk_agent_use_systemd
     - check_mk_socket.status.ActiveState == 'inactive'
     - checkmk_agent_version is version_compare('2.1.0', '<')
