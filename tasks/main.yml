@@ -363,7 +363,7 @@
           tags:
             - checkmk_agent_register
       when:
-        - check_mk_agent_use_systemd
-        - checkmk_agent_register or checkmk_agent_register_proxy
+        - check_mk_agent_use_systemd | bool
+        - (checkmk_agent_register | bool) or (checkmk_agent_register_proxy | bool)
 
 # vim: tabstop=2 expandtab shiftwidth=2 softtabstop=2 smartindent nu ft=yaml
