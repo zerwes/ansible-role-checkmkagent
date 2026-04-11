@@ -34,7 +34,7 @@ In the role we have included some (partialy debian specific) check plugins (`che
 # hostname of the checkmk server
 checkmk_hostname: "cmk.example.domain"
 checkmk_proto: https
-checkmk_path: "SITE/check_mk/agents"
+checkmk_site: MYSITE
 # IP of the checkmk server
 checkmk_ip: "192.168.0.10"
 # we prefere good old xinetd
