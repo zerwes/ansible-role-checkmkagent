@@ -70,6 +70,7 @@
     dest: "{{ _local_tmp }}/{{ checkmk_agent_deb }}"
     force: false
     mode: "0600"
+  check_mode: false
   when: download_checkmk_agent_deb | default(true)
   tags:
     - molecule-notest
