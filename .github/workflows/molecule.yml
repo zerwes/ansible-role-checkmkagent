@@ -65,6 +65,21 @@ jobs:
       - name: Install test dependencies.
         run: pip3 install ${{ matrix.pip3deps }}
 
+      - name: debug
+        run: |
+          ansible --version
+          echo "--------------------"
+          python --version
+          echo "--------------------"
+          pip list
+          echo "--------------------"
+          pwd
+          echo "--------------------"
+          ls -1
+          echo "--------------------"
+          ls -l
+          echo "--------------------"
+
       - name: run molecule tests
         run: molecule test
         env:
