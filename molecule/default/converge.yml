@@ -19,12 +19,12 @@
         var: checkmk_edition_name
     - name: "fetch server deb ..."
       get_url:
-        url: "https://download.checkmk.com/checkmk/{{ checkmk_agent_version }}/check-mk-{{ checkmk_edition_name }}-{{ checkmk_agent_version }}_0.bullseye_amd64.deb"
-        dest: "/var/tmp//check-mk-{{ checkmk_edition_name }}-{{ checkmk_agent_version }}_0.bullseye_amd64.deb"
+        url: "https://download.checkmk.com/checkmk/{{ checkmk_agent_version }}/check-mk-{{ checkmk_edition_name }}-{{ checkmk_agent_version }}_0.{{ ansible_distribution_release }}_amd64.deb"
+        dest: "/var/tmp//check-mk-{{ checkmk_edition_name }}-{{ checkmk_agent_version }}_0.{{ ansible_distribution_release }}_amd64.deb"
         force: false
         mode: 0600
     - name: "extract server deb ..."
-      command: "dpkg-deb -x /var/tmp/check-mk-{{ checkmk_edition_name }}-{{ checkmk_agent_version }}_0.bullseye_amd64.deb /var/tmp/check-mk-raw"
+      command: "dpkg-deb -x /var/tmp/check-mk-{{ checkmk_edition_name }}-{{ checkmk_agent_version }}_0.{{ ansible_distribution_release }}_amd64.deb /var/tmp/check-mk-raw"
       args:
         creates: "/var/tmp/check-mk-raw/opt/omd/versions/{{ checkmk_agent_version }}.cre/share/check_mk/agents/{{ checkmk_agent_deb }}"
     - name: "get agent dep from extracted files ..."
