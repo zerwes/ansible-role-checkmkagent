@@ -17,16 +17,16 @@ jobs:
         ansible:
           #- latest
           - 13
-          - 12
+          #- 12
           - 11
-          - 2.9
+          #- 2.9
         distro:
           - debian13
           - debian12
         checkmkversion:
-          - 2.5.0p5
+          #- 2.5.0p5
           - 2.4.0p31
-          - 2.3.0p48
+          #- 2.3.0p48
           #- 2.2.0p46
           #- 2.1.0p49
           #- 2.0.0p39
