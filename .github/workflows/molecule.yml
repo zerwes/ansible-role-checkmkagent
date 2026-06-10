@@ -6,6 +6,9 @@ on:
   push:
   schedule:
     - cron: "10 6 * * 1"
+defaults:
+  run:
+    working-directory: ansible-role-checkmkagent
 jobs:
   molecule:
     name: ansible
