@@ -3,6 +3,7 @@
   hosts: all
   vars:
     ansible_python_interpreter: /usr/bin/python3
+    checkmk_edition_name: "{{ checkmk_agent_version is version_compare('2.5', '>=') | ternary('community', 'raw') }}"
   pre_tasks:
     - name: print ansible version
       ansible.builtin.debug:
@@ -15,7 +16,7 @@
         var: checkmk_agent_version
     - name: "fetch server deb ..."
       get_url:
-        url: "https://download.checkmk.com/checkmk/{{ checkmk_agent_version }}/check-mk-raw-{{ checkmk_agent_version }}_0.bullseye_amd64.deb"
+        url: "https://download.checkmk.com/checkmk/{{ checkmk_agent_version }}/check-mk-{{ checkmk_edition_name }}-{{ checkmk_agent_version }}_0.bullseye_amd64.deb"
         dest: "/var/tmp//check-mk-raw-{{ checkmk_agent_version }}_0.bullseye_amd64.deb"
         force: false
         mode: 0600
