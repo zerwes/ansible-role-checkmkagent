@@ -4,6 +4,7 @@
   vars:
     ansible_python_interpreter: /usr/bin/python3
     checkmk_edition_name: "{{ checkmk_agent_version is version_compare('2.5', '>=') | ternary('community', 'raw') }}"
+    checkmk_edition_dirname: "{{ checkmk_agent_version is version_compare('2.5', '>=') | ternary('community', 'cre') }}"  # edition dir name in the extracted server deb
   pre_tasks:
     - name: print ansible version
       ansible.builtin.debug:
@@ -24,12 +25,12 @@
         force: false
         mode: 0600
     - name: "extract server deb ..."
-      command: "dpkg-deb -x /var/tmp/check-mk-{{ checkmk_edition_name }}-{{ checkmk_agent_version }}_0.{{ ansible_distribution_release }}_amd64.deb /var/tmp/check-mk-raw"
+      command: "dpkg-deb -x /var/tmp/check-mk-{{ checkmk_edition_name }}-{{ checkmk_agent_version }}_0.{{ ansible_distribution_release }}_amd64.deb /var/tmp/check-mk-{{ checkmk_edition_name }}"
       args:
-        creates: "/var/tmp/check-mk-raw/opt/omd/versions/{{ checkmk_agent_version }}.cre/share/check_mk/agents/{{ checkmk_agent_deb }}"
+        creates: "/var/tmp/check-mk-{{ checkmk_edition_name }}/opt/omd/versions/{{ checkmk_agent_version }}.cre/share/check_mk/agents/{{ checkmk_agent_deb }}"
     - name: "get agent dep from extracted files ..."
       copy:
-        src: "/var/tmp/check-mk-raw/opt/omd/versions/{{ checkmk_agent_version }}.cre/share/check_mk/agents/{{ checkmk_agent_deb }}"
+        src: "/var/tmp/check-mk-{{ checkmk_edition_name }}/opt/omd/versions/{{ checkmk_agent_version }}.{{ checkmk_edition_dirname }}/share/check_mk/agents/{{ checkmk_agent_deb }}"
         dest: "/var/tmp/{{ checkmk_agent_deb }}"
         mode: 0600
         remote_src: true
