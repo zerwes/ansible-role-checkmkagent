@@ -27,7 +27,7 @@
     - name: "extract server deb ..."
       command: "dpkg-deb -x /var/tmp/check-mk-{{ checkmk_edition_name }}-{{ checkmk_agent_version }}_0.{{ ansible_distribution_release }}_amd64.deb /var/tmp/check-mk-{{ checkmk_edition_name }}"
       args:
-        creates: "/var/tmp/check-mk-{{ checkmk_edition_name }}/opt/omd/versions/{{ checkmk_agent_version }}.cre/share/check_mk/agents/{{ checkmk_agent_deb }}"
+        creates: "/var/tmp/check-mk-{{ checkmk_edition_name }}/opt/omd/versions/{{ checkmk_agent_version }}.{{ checkmk_edition_dirname }}/share/check_mk/agents/{{ checkmk_agent_deb }}"
     - name: "get agent dep from extracted files ..."
       copy:
         src: "/var/tmp/check-mk-{{ checkmk_edition_name }}/opt/omd/versions/{{ checkmk_agent_version }}.{{ checkmk_edition_dirname }}/share/check_mk/agents/{{ checkmk_agent_deb }}"
