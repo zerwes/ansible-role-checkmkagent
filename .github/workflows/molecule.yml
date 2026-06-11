@@ -55,6 +55,8 @@ jobs:
         exclude:
           - distro: debian13
             ansible: 2.9
+          - distro: debian13
+            checkmkversion: 2.3.0p48
     steps:
       - uses: actions/checkout@v4
         with:
