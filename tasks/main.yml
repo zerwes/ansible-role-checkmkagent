@@ -348,6 +348,16 @@
   when: item | length > 0
   with_items: "{{ check_mk_local_plugins_remove.values() | list | flatten }}"
 
+- name: Copy local check_mk checks
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: "/usr/lib/check_mk_agent/local/{{ item | basename }}"
+    owner: root
+    group: root
+    mode: "0644"
+  when: item | length > 0
+  with_items: "{{ check_mk_local_files.values() | list | flatten }}"
+
 - name: debug checkmk_agent_register related vars
   ansible.builtin.debug:
     msg: "checkmk_agent_register: {{ checkmk_agent_register }} + checkmk_agent_register_proxy: {{ checkmk_agent_register_proxy }}"

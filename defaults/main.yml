@@ -187,6 +187,9 @@ check_mk_local_plugins_template: {}
 # plugins to remove
 check_mk_local_plugins_remove: {}
 
+# dict of files to copy to /usr/lib/check_mk_agent/local/
+check_mk_local_files: {}
+
 # dict of local cfg files
 # will be installed into /etc/check_mk/
 check_mk_local_cfg: {}
